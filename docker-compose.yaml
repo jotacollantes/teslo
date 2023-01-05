@@ -1,0 +1,9 @@
+services:
+  teslodb:
+    image: mongo:6.0.1
+    container_name: teslo-database
+    ports:
+      - 27017:27017
+    volumes:
+    #La informacion de mongo se va a grabar en /mongo del filesystem del proyecto y en el filesystem de la imagen
+      - ./mongo:/data/db
