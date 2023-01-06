@@ -1,4 +1,4 @@
-# Next.js OpenJira App
+# Next.js TESLO App
 Para correr la aplicacion localmente, se necesita la base de datos
 ```
 docker-compose up -d
@@ -8,7 +8,7 @@ docker-compose up -d
 
 * MongoDB URL Local:
 ```
-mongodb://localhost:27017/entriesdb
+mongodb://localhost:27017/teslodb
 ```
 
 * Para ver si esta en uso el puerto 27017 
