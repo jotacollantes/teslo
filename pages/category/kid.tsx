@@ -1,27 +1,27 @@
 import { Typography } from "@mui/material";
-import { ShopLayout } from "../components/layouts/ShopLayout";
-import { ProductList } from "../components/products";
-import { FullScreenLoading } from "../components/ui/FullScreenLoading";
+import { ShopLayout } from "../../components/layouts/ShopLayout";
+import { ProductList } from "../../components/products";
+import { FullScreenLoading } from "../../components/ui/FullScreenLoading";
 //import { initialData } from "../database/products";
-import { useProducts } from '../hooks';
+import { useProducts } from '../../hooks';
 
 
-export default function Home() {
-  const {products,error,isLoading}=useProducts('/products')
+export default function Women() {
+  const {products,error,isLoading}=useProducts('/products?gender=kid')
   if (error) return <div>failed to load</div>
   if (isLoading) return <FullScreenLoading />
-  //console.log(products)
+  //console.log(data)/
   return (
     //Añadimos el layout ShopLayout
     <ShopLayout
-      title={"Teslo-shop - Home"}
-      pageDescription={"Encuentra los mejores productos"}
+      title={"Teslo-shop - Kids"}
+      pageDescription={"Encuentra los mejores productos para Niños"}
     >
       <Typography variant="h1" component="h1">
         Tienda
       </Typography>
       <Typography variant="h2" sx={{ marginBottom: 1 }}>
-        Todos los Productos
+        Todos los Productos de Niños
       </Typography>
 
       {/* <Grid container spacing={4}>

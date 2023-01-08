@@ -56,7 +56,7 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   //! Es necesario crear el tipado para cualquier elemento o propiedad que se envie en la response
   //! con .select() especifico los campos y -_1 excluye el campo _id de la respuesta
   const products: Data = await Product.find(filtro)
-    .select("title images price inStock slug -_id")
+    .select("title images sizes price inStock slug -_id")
     .lean();
 
   await db.disconnect();

@@ -32,7 +32,7 @@ const getProductsBySlug = async (
   //! Es necesario crear el tipado para cualquier elemento o propiedad que se envie en la response
   //! con .select() especifico los campos y -_1 excluye el campo _id de la respuesta
   const product: Data = await Product.findOne(filtro)
-    .select("title description images inStock slug -_id")
+    .select("title description sizes images inStock slug -_id")
     .lean();
 
   await db.disconnect();

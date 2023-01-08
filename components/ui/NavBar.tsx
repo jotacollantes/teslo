@@ -2,10 +2,19 @@
 import { SearchOutlined, ShoppingCart, ShoppingCartOutlined } from '@mui/icons-material';
 import { AppBar, Badge, Box, Button, IconButton, Link, Toolbar, Typography } from '@mui/material';
 import NextLink from 'next/link'
-import React from 'react'
+import { useRouter } from 'next/router';
+import React, { useContext } from 'react'
+import { UIContext } from '../../context';
+
+
 
 
 export const NavBar = () => {
+   const {asPath}=useRouter()
+   const ruta= asPath.split('/')
+   const page=ruta[ruta.length -1]
+   const {isMenuOpen,toogleSideMenu} = useContext(UIContext)
+   //console.log({isMenuOpen,toogleSideMenu})
   return (
     <AppBar>
         <Toolbar>
@@ -24,17 +33,17 @@ export const NavBar = () => {
             <Box sx={{display:{xs:'none',sm:'block'}}}>
                 <NextLink href='/category/men' passHref legacyBehavior>
                     <Link>
-                    <Button>Hombres</Button>
+                    <Button color={page==='men' ? 'primary' : 'info'}>Hombres</Button>
                     </Link>
                 </NextLink>
                 <NextLink href='/category/women' passHref legacyBehavior>
                     <Link>
-                    <Button>Mujeres</Button>
+                    <Button color={page==='women' ? 'primary' : 'info'}>Mujeres</Button>
                     </Link>
                 </NextLink>
                 <NextLink href='/category/kid' passHref legacyBehavior>
                     <Link>
-                    <Button>Niños</Button>
+                    <Button color={page==='kid' ? 'primary' : 'info'}>Niños</Button>
                     </Link>
                 </NextLink>
             </Box>
@@ -56,7 +65,12 @@ export const NavBar = () => {
                     </IconButton>
                     </Link>
                 </NextLink>
-                <Button>Menu</Button>
+                <Button
+                //Asi onClick={()=>toogleSideMenu()} o asi:
+                onClick={toogleSideMenu}
+                >
+                    Menu
+                </Button>
         </Toolbar>
     </AppBar>
   )
