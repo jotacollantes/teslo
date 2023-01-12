@@ -3,6 +3,7 @@ import {
   Card,
   CardActionArea,
   CardMedia,
+  Chip,
   Grid,
   Link,
   Typography,
@@ -44,7 +45,26 @@ export const ProductCard = ({ product }: Props) => {
         {/* Para no cargar los productos en cache ponemos prefetach={false} */}
         <NextLink href={`/product/${product.slug}`} passHref legacyBehavior prefetch={false}>
           <Link>
+          
+
+
+
           <CardActionArea>
+
+            { 
+            //! Para mostrar que no hay disponibilidad 
+              (product.inStock===0) &&
+              
+                (<Chip
+           color='primary'
+           label='No hay disponibles'
+           sx={{position:'absolute',zIndex:99,top:'10px',left:'10px'}}
+           />)
+
+              }
+            
+           
+           
           <CardMedia
             component={"img"}
             //image={`products/${product.images[0]}`}

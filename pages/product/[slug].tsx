@@ -1,17 +1,20 @@
 import { AppBlocking } from "@mui/icons-material";
 import { Box, Button, Chip, Grid, Typography } from "@mui/material";
 import { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useContext, useState } from "react";
 import { ShopLayout } from "../../components/layouts";
 import {
   ItemCounter,
   ProductSlideShow,
   SizeSelector,
 } from "../../components/products";
+import { CartContext } from "../../context";
 import { dbProducts } from "../../database";
+import { ICartProduct } from "../../interfaces";
 
 //import { initialData } from '../../database/products';
-import { IProduct } from "../../interfaces/products";
+import { IProduct, ISize } from '../../interfaces/products';
 
 //const product=initialData.products[0]
 interface Props {
@@ -30,9 +33,46 @@ const ProductPage = ({ product }: Props) => {
   // if (!product){
   //   return <h1>Producto no Existe!</h1>
   // }
-
   //!De esta manera es CEO Friendly
+  const router =useRouter()
+  const {cart,addProductToCart} = useContext(CartContext)
+  const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
+      _id:product._id,      
+      image:product.images[0],  
+      price:product.price,    
+      size:   undefined , // Para no definir una talla por defecto 
+      slug:     product.slug  ,   
+      title:    product.title,    
+      gender:   product.gender   ,
+      quantity: 1 
+  }) 
+  
+  //console.log(tempCartProduct)
+  const sizeSelected =(size:ISize)=>{
+    setTempCartProduct({
+      ...tempCartProduct,
+      size
+    })
+    
+  }
+ 
 
+  const onUpdateQuantity=(quantity:number)=>{
+    //console.log('entra por aqui')
+        setTempCartProduct({
+          ...tempCartProduct,
+          quantity
+        })
+  }
+
+  const addProductCard=()=>
+  {
+    if(!tempCartProduct.size) return
+    //Todo: Llamar a la accion del context para agregar al carrito
+    addProductToCart(tempCartProduct)
+    //console.log(tempCartProduct)
+    router.push('/cart')
+  }
   return (
     <ShopLayout title={product.title} pageDescription={product.description}>
       <Grid container sx={{ mt: 10 }} spacing={3}>
@@ -52,16 +92,49 @@ const ProductPage = ({ product }: Props) => {
             {/* Margen arriba y abajo */}
             <Box sx={{ my: 2 }}>
               <Typography variant="subtitle2">Cantidad</Typography>
+              <Typography variant="h1">{tempCartProduct.quantity}</Typography>
               {/* Item Counter */}
-              <ItemCounter />
+              <ItemCounter
+               //!incrementar o decrementar definida en la Prop del componente hijo ItemCounter emite el argumento (value)
+              //incrementar={(value)=>updateQuantity(value)}
+              //decrementar={(value)=>updateQuantity(value)}
+              currentValue={tempCartProduct.quantity}
+              updatedQuantity={onUpdateQuantity}
+              
+              maxValue={product.inStock}
+              />
               {/* Size Selector */}
               {/* <SizeSelector selectedSize={product.sizes[2]} sizes={product.sizes}/> */}
-              <SizeSelector sizes={product.sizes} />
+              <SizeSelector
+              sizes={product.sizes}
+              selectedSize={tempCartProduct.size}
+              //!onSelectedSize definida en la Prop del componente hijo SizeSelector emite el argumento (size)
+              onSelectedSize={(size)=>sizeSelected(size)}
+              />
             </Box>
-            <Button color="secondary" className="circular-btn">
-              Agregar al Carrito
+
+            {
+              //! Para mostrar que no hay disponibilidad
+              (product.inStock > 0) ?
+              <Button
+              color="secondary"
+              className="circular-btn"
+              onClick={addProductCard}
+              >
+
+                {
+                  tempCartProduct.size
+                  ? 'Agregar al Carrito'
+                  : 'Seleccione una talla'
+                }
+              
             </Button>
-            {/* <Chip label='No hay disponibles' color='error' variant='outlined' /> */}
+              :
+              <Chip label='No hay disponibles' color='error' variant='outlined' /> 
+            }
+
+            
+           
 
             {/* Descripcion */}
             <Box sx={{ mt: 3 }}>

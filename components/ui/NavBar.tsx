@@ -19,13 +19,14 @@ import {
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { ChangeEvent, useContext, useState } from "react";
-import { UIContext } from "../../context";
+import { CartContext, UIContext } from "../../context";
 
 export const NavBar = () => {
   const { asPath, push } = useRouter();
   const ruta = asPath.split("/");
   const page = ruta[ruta.length - 1];
   const { isMenuOpen, toogleSideMenu } = useContext(UIContext);
+  const {numberOfItems} = useContext(CartContext)
   //console.log({isMenuOpen,toogleSideMenu})
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -45,7 +46,7 @@ export const NavBar = () => {
   ) => {
     setSearchTerm(e.target.value);
   };
-
+   
   return (
     <AppBar>
       <Toolbar>
@@ -134,7 +135,8 @@ export const NavBar = () => {
         <NextLink href="/cart" passHref legacyBehavior>
           <Link>
             <IconButton>
-              <Badge badgeContent={2}>
+              <Badge
+              badgeContent={numberOfItems > 9 ? '+9' : numberOfItems }>
                 <ShoppingCartOutlined />
               </Badge>
             </IconButton>

@@ -8,31 +8,45 @@ import {
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
-import React from "react";
-import { initialData } from "../../database/products";
+import React, { useContext } from "react";
+import { CartContext } from "../../context";
+//import { initialData } from "../../database/products";
 import { ItemCounter } from "../products/ItemCounter";
+import { ICartProduct } from "../../interfaces";
 
-const productsInCart = [
-  initialData.products[0],
-  initialData.products[1],
-  initialData.products[2],
-];
+
+// const productsInCart = [
+//   initialData.products[0],
+//   initialData.products[1],
+//   initialData.products[2],
+// ];
 interface Props {
   editable: boolean;
 }
 export const CardList = ({ editable }: Props) => {
+  const {cart,addProductToCart,updateCartQuantity,removeItem} = useContext(CartContext)
+
+
+  const onNewCartQuantityValue=(product:ICartProduct,newQuantityValue:number)=>{
+    product.quantity=newQuantityValue
+    updateCartQuantity(product)
+  }
+
+  const onRemoveItem =(product:ICartProduct)=>{
+      removeItem(product)
+  }
   return (
     <>
-      {productsInCart.map((product, ix) => {
+      {cart.map((product, ix) => {
         return (
           <Grid container spacing={2} key={ix} sx={{ mb: 1 }}>
             <Grid item xs={3}>
-              <NextLink href={"/product/slug"} passHref legacyBehavior>
+              <NextLink href={`/product/${product.slug}`} passHref legacyBehavior>
                 <Link>
                   <CardActionArea>
                     {/* /public/products */}
                     <CardMedia
-                      image={`/products/${product.images[0]}`}
+                      image={`/products/${product.image}`}
                       component="img"
                       sx={{ borderRadios: "5px" }}
                     ></CardMedia>
@@ -44,14 +58,20 @@ export const CardList = ({ editable }: Props) => {
               <Box display={"flex"} flexDirection="column">
                 <Typography variant="body1">{product.title}</Typography>
                 <Typography variant="body1">
-                  Talla <strong>M</strong>
+                  Talla <strong>{product.size}</strong>
                 </Typography>
 
                 {/* Condicional */}
                 {editable ? (
-                  <ItemCounter />
+                  <ItemCounter
+                  currentValue={product.quantity}
+                  maxValue={10}
+                  updatedQuantity={
+                    //!Envio como parametro el value que me emite el prop updateQuantiy y el product que estoy iterando dentro del map
+                    (value)=>onNewCartQuantityValue(product,value)
+                  } />
                 ) : (
-                  <Typography variant="h6">3 items</Typography>
+                  <Typography variant="h6">{product.quantity} {product.quantity ===1 ? 'Item' :  'Items'}</Typography>
                 )}
               </Box>
             </Grid>
@@ -62,10 +82,14 @@ export const CardList = ({ editable }: Props) => {
               alignItems={"center"}
               flexDirection="column"
             >
-              <Typography variant="subtitle1">{`$${product.price}`}</Typography>
+              <Typography variant="subtitle1">{`$${product.price * product.quantity}`}</Typography>
               {/* Editable */}
               {editable && (
-                <Button variant="text" color="secondary">
+                <Button
+                variant="text"
+                color="secondary"
+                onClick={()=>onRemoveItem(product)}
+                >
                   {" "}
                   remover
                 </Button>
