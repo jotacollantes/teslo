@@ -10,16 +10,9 @@ import {
 import NextLink from "next/link";
 import React, { useContext } from "react";
 import { CartContext } from "../../context";
-//import { initialData } from "../../database/products";
 import { ItemCounter } from "../products/ItemCounter";
 import { ICartProduct } from "../../interfaces";
 
-
-// const productsInCart = [
-//   initialData.products[0],
-//   initialData.products[1],
-//   initialData.products[2],
-// ];
 interface Props {
   editable: boolean;
 }
