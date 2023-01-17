@@ -30,10 +30,12 @@ const RegisterPage = () => {
     watch,
     formState: { errors },
   } = useForm<FormData>();
+
+
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('')
-   const {registerUser} = useContext(AuthContext)
-   const router =useRouter()
+  const {registerUser,urlDestination} = useContext(AuthContext)
+  const router =useRouter()
   const onCreateUser = async ({ name, email, password }: FormData) => {
     setShowError(false);
 
@@ -50,10 +52,8 @@ const RegisterPage = () => {
       return;
       }
 
-      router.replace('/')
-
-
-
+      //router.replace('/')
+      router.replace(urlDestination)
   };
   return (
     <AuthLayout title={"Crear Usuario"}>

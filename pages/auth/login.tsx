@@ -16,8 +16,8 @@ type FormData = {
 
 const LoginPage = () => {
   const router =useRouter()
-  const {loginUser,user} = useContext(AuthContext)
-  
+  const {loginUser,user,urlDestination} = useContext(AuthContext)
+  //console.log(urlDestination)
   const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
   const [showError, setShowError] = useState(false)
 
@@ -37,7 +37,27 @@ const LoginPage = () => {
       }
       //!En este punto todo salio bien y se rempleza la pagina del usuario donde estaba actualmente por la del index router.replace('/')
      //Todo navegar a la pantalla donde estaba el usuario 
-     router.replace('/')
+     //router.replace('/')
+
+      // Todo: navegar a la pantalla que el usuario estaba
+      
+      let destination:string
+
+      //!Solo si es que el redirect a /auth/login viene desde /checkout/address, se usa query params.
+      if (router.query.p)
+      {
+        destination = router.query.p?.toString() || '/';
+        router.replace(destination);
+      }
+      else
+      {
+        router.replace(urlDestination)
+      }
+
+
+
+
+     
    }
 
   return (

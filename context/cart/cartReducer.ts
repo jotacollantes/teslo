@@ -31,6 +31,7 @@ export const cartReducer = (
         //!Propago todas las propiedades del estado
         ...state,
         //Sobreescribo la propiedad cart, propago todos los todo que estan dentro del payload.
+        isLoaded:true,
         cart: action.payload,
       };
     case "[Cart] - Update Cart Quantity":

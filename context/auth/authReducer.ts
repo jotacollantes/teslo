@@ -3,7 +3,8 @@ import { AuthState } from "./";
 
 type authActionType =
   | { type: "[Auth] - Login"; payload: IUser }
-  | { type: "[Auth] - Logout" };
+  | { type: "[Auth] - Logout" }
+  | { type: "[Auth] - Url";payload:string };
 
 export const authReducer = (
   state: AuthState,
@@ -24,6 +25,17 @@ export const authReducer = (
         user: undefined,
       };
     //break;
+
+    case "[Auth] - Url":
+      return {
+        ...state,
+        urlDestination:action.payload
+      };
+    //break;
+
+
+
+
     default:
       return state;
   }

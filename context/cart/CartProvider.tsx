@@ -5,7 +5,9 @@ import { CartContext, cartReducer } from "./";
 import Cookie from "js-cookie";
 import { IProduct } from '../../interfaces/products';
 
+
 export interface CartState {
+  isLoaded:boolean;
   cart: ICartProduct[];
   numberOfItems: number;
   subTotal: number;
@@ -19,6 +21,7 @@ interface Props {
 
 //Inicializamos
 const INITIAL_STATE: CartState = {
+  isLoaded:false,
   cart: [],
   numberOfItems: 0,
   subTotal: 0,
@@ -29,7 +32,8 @@ const INITIAL_STATE: CartState = {
 export const CartProvider = ({ children }: Props) => {
   const [state, dispatch] = useReducer(cartReducer, INITIAL_STATE);
 
-  //!Para grabar las cookies y que el carrito sea persistente
+
+  //!Para leer las cookies y que el carrito sea persistente
   useEffect(() => {
     
     try {
@@ -38,13 +42,14 @@ export const CartProvider = ({ children }: Props) => {
        console.log('leyo la cookie',cookieCart)
     } catch (error) {
       dispatch({type: "[Cart] - LoadCart from cookies",payload: [] })
-      console.log('No se leyo la cokkie',error)
+      console.log('No se leyo la cookie',error)
     }
    
  }, []);
 
   //!Para grabar las cookies y que el carrito sea persistente
   useEffect(() => {
+     console.log('grabando cookies', state.cart)
     Cookie.set('cart', JSON.stringify(state.cart));
   }, [state.cart]);
 
@@ -68,7 +73,7 @@ export const CartProvider = ({ children }: Props) => {
          total:subTotal+taxCart
 
      }
-     console.log({orderSumary})
+     //console.log({orderSumary})
      dispatch({type:"[Cart] - Update Summary",payload:orderSumary})
   }, [state.cart])
   
