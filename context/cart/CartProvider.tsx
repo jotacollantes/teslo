@@ -1,9 +1,9 @@
 import React, { useEffect, useReducer } from "react";
 import { ICartProduct } from "../../interfaces";
 import { CartContext, cartReducer } from "./";
-
 import Cookie from "js-cookie";
-import { IProduct } from '../../interfaces/products';
+//import { IProduct } from '../../interfaces/products';
+import { FormData as FormDataAddress } from "../../pages/checkout/address"
 
 
 export interface CartState {
@@ -13,6 +13,7 @@ export interface CartState {
   subTotal: number;
   taxCart: number;
   total: number;
+  shippingAddress?: FormDataAddress;
 }
 
 interface Props {
@@ -27,6 +28,8 @@ const INITIAL_STATE: CartState = {
   subTotal: 0,
   taxCart: 0,
   total: 0,
+  // Al inicio puede que no tenga la cookie con la informacion del address
+  shippingAddress: undefined 
 };
 
 export const CartProvider = ({ children }: Props) => {
@@ -46,6 +49,26 @@ export const CartProvider = ({ children }: Props) => {
     }
    
  }, []);
+
+  //!Para Leer la cookie del address y cargarla en el state 
+
+  useEffect(() => {
+    
+    try {
+       const cookieAddress= Cookie.get('address') ? JSON.parse(Cookie.get('address')!):undefined
+       dispatch({type: "[Cart] - LoadAddress from cookies",payload: cookieAddress })
+       console.log('leyo la cookie',cookieAddress)
+    } catch (error) {
+      dispatch({type: "[Cart] - LoadAddress from cookies",payload: undefined })
+      console.log('No se leyo la cookie',error)
+    }
+   
+ }, []);
+
+
+
+
+
 
   //!Para grabar las cookies y que el carrito sea persistente
   useEffect(() => {
@@ -121,13 +144,20 @@ export const CartProvider = ({ children }: Props) => {
     const removeItem =(product:ICartProduct)=>{
       dispatch({ type: "[Cart] - Remove product in cart", payload: product });
     }
+
+    const updateAddress =(adress:FormDataAddress)=>{
+      dispatch({ type: "[Cart] - Update Address", payload: adress });
+
+    }
+
   return (
     <CartContext.Provider
       value={{
         ...state,
         addProductToCart,
         updateCartQuantity,
-        removeItem
+        removeItem,
+        updateAddress
         
       }}
     >

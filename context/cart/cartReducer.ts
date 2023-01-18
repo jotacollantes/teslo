@@ -1,5 +1,6 @@
 import { ICartProduct } from "../../interfaces";
 import { CartState } from "./";
+import { FormData as FormDataAddress } from "../../pages/checkout/address"
 
 interface SummaryType {
   numberOfItems: number;
@@ -13,7 +14,10 @@ type CartActionType =
   | { type: "[Cart] - Add Product", payload: ICartProduct[] }
   | { type: "[Cart] - Update Cart Quantity", payload: ICartProduct }
   | { type: "[Cart] - Remove product in cart", payload: ICartProduct }
-  | { type: "[Cart] - Update Summary", payload: SummaryType };
+  | { type: "[Cart] - Update Summary", payload: SummaryType }
+  | { type: "[Cart] - LoadAddress from cookies", payload: FormDataAddress|undefined }
+  | { type: "[Cart] - Update Address", payload: FormDataAddress|undefined }
+  ;
 
 export const cartReducer = (
   state: CartState,
@@ -73,6 +77,14 @@ export const cartReducer = (
         //*Propago las propiedades payload que tiene las propiedades del payload que tiene los valores del summary
         ...action.payload
       };
+
+      case "[Cart] - LoadAddress from cookies":
+      case "[Cart] - Update Address":
+      return {
+        ...state,
+        shippingAddress: action.payload,
+      };
+    //break;
 
     default:
       return state;

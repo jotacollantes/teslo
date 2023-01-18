@@ -8,15 +8,20 @@ import {
   Typography,
   Button,
   Box,
+  FormHelperText,
 } from "@mui/material";
-import React from "react";
+import React,{useContext} from "react";
 import { useForm } from "react-hook-form";
 import { ShopLayout } from "../../components/layouts";
 import { countries } from "../../utils";
 import Cookie from 'js-cookie';
+import { useRouter } from "next/router";
+
+import { CartContext } from "../../context";
 
 
-type FormData = {
+
+export interface FormData {
   firstname: string;
   lastname: string;
   address:string;
@@ -28,31 +33,56 @@ type FormData = {
 
 };
 
+
+const getAddressFromCookies=():FormData=>
+{
+
+       
+  const cookieData =Cookie.get('address') ? JSON.parse(Cookie.get('address')!):{}
+    
+  return cookieData
+
+}
+
+
+
 const AddressPage = () => {
+  const {updateAddress} = useContext(CartContext)
+  const router=useRouter()
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<FormData>({ defaultValues: {
-    firstname:'',
-    lastname:'',
-    address:'',
-    address2:'',
-    zip:'',
-    city:'',
-    country:'',
-    phone:''
-   }});
+  } = useForm<FormData>({ defaultValues:getAddressFromCookies()
+    //{
+    // firstname:'',
+    // lastname:'',
+    // address:'',
+    // address2:'',
+    // zip:'',
+    // city:'',
+    // country:'',
+    // phone:''
+    //}
+  });
+ 
+ 
+  
 
   const onSendAddress = async (data: FormData) => {
    
      //!Grabamos la cookie
      Cookie.set('address',JSON.stringify(data))
+
+     updateAddress(data)
+     router.push('/checkout/summary')
      return;
      
   };
 
+   //Para el manejo del Select List
+  const {country:countrycode}=getAddressFromCookies() 
   return (
     <ShopLayout title={""} pageDescription={""}>
       <Typography>Direccion</Typography>
@@ -155,19 +185,33 @@ const AddressPage = () => {
           ></TextField>
         </Grid>
         <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
+          <FormControl
+          fullWidth
+          error={ errors.country ? true : false} 
+          >
+          <InputLabel >Pais</InputLabel>
             <Select variant="filled"
             label="Pais"
-            defaultValue="ECU"
-            //value={'ECU'}
-            {...register("country")}
+            defaultValue={countrycode}
+            //value={ country ? country : 'ECU'}
+            //value={country}
+            {...register("country",{required: "Pais es requerido"})
+            }
+            //error={errors.country ? true : false}
+
+            //helperText={errors.country?.message}
             >
-              {countries.map((country) => (
-                <MenuItem key={country.code} value={country.code}>
-                  {country.name}
+              {countries.map((pais) => (
+                <MenuItem
+                key={pais.code}
+                value={pais.code}
+                selected={pais.code===countrycode?true:false}
+                >
+                  {pais.name}
                 </MenuItem>
               ))}
             </Select>
+            <FormHelperText>{errors.country?.message}</FormHelperText>
           </FormControl>
         </Grid>
 
@@ -183,8 +227,8 @@ const AddressPage = () => {
             //   message: "Address debe de ser de 3 o mas caracteres",
             // },
           })}
-          error={errors.address ? true : false}
-          helperText={errors.address?.message}
+          error={errors.phone ? true : false}
+          helperText={errors.phone?.message}
           ></TextField>
         </Grid>
       </Grid>

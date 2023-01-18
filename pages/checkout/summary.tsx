@@ -1,12 +1,18 @@
 import { Box, Button, Card, CardContent, Divider, Grid, Link, Typography } from '@mui/material';
-import React from 'react'
+import React, { useContext } from 'react'
 import { CardList } from '../../components/cart';
 import { ShopLayout } from '../../components/layouts/';
 import { OrderSumary } from '../../components/cart/OrderSumary';
 import NextLink from 'next/link';
+import { CartContext } from '../../context';
+import { countries } from '../../utils';
+import { PaidSharp } from '@mui/icons-material';
+
 
 
 const SummaryPage = () => {
+
+    const {shippingAddress,numberOfItems} = useContext(CartContext)
   return (
     <ShopLayout title={'Resumen de Orden'} pageDescription={'Resumen de la orden'} >
         <Typography variant='h1' component={'h1'}>Resumen de la Orden</Typography>
@@ -18,7 +24,7 @@ const SummaryPage = () => {
             <Grid item xs={12} sm={5}>
                 <Card className='summary-card'>
                     <CardContent>
-                        <Typography variant='h2'>Resumen (3 Productos)</Typography>
+                        <Typography variant='h2'>Resumen: Cantidad de Items: ({numberOfItems})</Typography>
                         <Divider sx={{my:3}}/>
 
                         <Box display={'flex'} justifyContent='space-between'>
@@ -30,11 +36,23 @@ const SummaryPage = () => {
 
                         </Box>
                         
-                        <Typography>Juan jose</Typography>
-                        <Typography>Bosques</Typography>
-                        <Typography>Guayaquil</Typography>
-                        <Typography>Ecuador</Typography>
-                        <Typography>0997154016</Typography>
+                        <Typography>{shippingAddress?.firstname  + ' ' +shippingAddress?.lastname}</Typography>
+                        <Typography>{shippingAddress?.address + ' ' + shippingAddress?.address2}</Typography>
+                        <Typography>{shippingAddress?.city}</Typography>
+                        <Typography>{shippingAddress?.zip}</Typography>
+                        <Typography>{ 
+                        countries.map( (pais)=>{
+                            if (pais.code=== shippingAddress?.country)
+                            {
+                                return pais.name
+                            }
+                        })
+                   
+                        }
+                            
+                       
+                        </Typography>
+                        <Typography>{shippingAddress?.phone}</Typography>
 
                         <Divider sx={{my:3}}/>
 
