@@ -3,7 +3,7 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GithubProvider from "next-auth/providers/github"
-import { loadGetInitialProps } from "next/dist/shared/lib/utils"
+
 import { dbUsers } from "../../../database"
 
 
@@ -11,15 +11,10 @@ import { dbUsers } from "../../../database"
 export default NextAuth({
   // Configure one or more authentication providers
   providers: [
-    GithubProvider({
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
-    }),
+   
     // ...add more providers here
-    
-
-    CredentialsProvider({
-      name:'Credentials',
+      CredentialsProvider({
+      name:'Custom Login',
       credentials:{
       email:{label:'Correo:',type:'email',placeholder:'correo@google.com'},
       password:{label:'Contraseña:',type:'password',placeholder:'contraseña'}
@@ -31,14 +26,12 @@ export default NextAuth({
       //! Lo que dbUsers.checkUserEmailPassword retorna {name:'Juan',email:'juan@collantes.ec',role:'admin'}  as any
       
       return await dbUsers.checkUserEmailPassword(credentials!.email,credentials!.password) as any
-
-
-       
       }}),
-    
-
-
-  ],
+      GithubProvider({
+        clientId: process.env.GITHUB_ID!,
+        clientSecret: process.env.GITHUB_SECRET!,
+      }),
+    ],
 
    //!Customs Pages
    pages:{
@@ -60,7 +53,7 @@ export default NextAuth({
       if(account){
         //*añado la propiedad token.accesToken
         token.accessToken=account.access_token;
-        console.log('callback jwt entra al  access token:',token.accessToken)
+        //console.log('callback jwt entra al  access token:',token.accessToken)
       }
 
       switch (account?.type) {
@@ -89,7 +82,7 @@ export default NextAuth({
       //console.log('session',{session,token,user})
       //console.log('token:',token)
       //session.accessToken=token.accessToken
-      session.user=token.user! 
+      session.user=token.user as any
       //newSession={...session}
       
       //console.log('sesion:',session)

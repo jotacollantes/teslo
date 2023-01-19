@@ -25,7 +25,7 @@ export const checkUserEmailPassword = async (
     name,
   };
 };
-
+// Esta función crea o verifica el usuario de OAuth
 export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
   await db.connect();
   const user = await User.findOne({ email: oAuthEmail });
@@ -33,7 +33,7 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
   if (user) {
     await db.disconnect();
     const { role, email, name, _id } = user;
-    console.log('encontro la cuenta de github y se sale')
+    //console.log('encontro la cuenta de github y se sale')
     return {
       _id,
       email,
@@ -41,6 +41,8 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
       name,
     };
   }
+
+  //!En este punto si la autenticacion en github es valida y el usuario no existe en la base de datos, se graba el usuario nuevo
   const newUser = new User({email:oAuthEmail,name: oAuthName,role:'client',password:'@'})
   await newUser.save()
   db.disconnect()

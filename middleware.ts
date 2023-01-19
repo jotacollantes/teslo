@@ -1,26 +1,27 @@
-// middleware.ts
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
+export async function middleware(req: NextRequest) {
+  //   if (request.nextUrl.pathname.match('/checkout/address') ||request.nextUrl.pathname.match('/checkout/summary')) {
+  //     const token=request.cookies.get('token')?.value
+  //     return NextResponse.next()
+  //  }
 
-// This function can be marked `async` if using `await` inside
-export const  middleware=async(request: NextRequest) =>{
+  const session = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-
-
-
-  if (request.nextUrl.pathname.match('/checkout/address') ||request.nextUrl.pathname.match('/checkout/summary')) {
-     const token=request.cookies.get('token')?.value
-     //console.log('token valido')
-    //  try {
-    //   await isValidToken(token!)
-    //   console.log('token valido')
-    //  } catch (error) {
-    //   console.log('token invalido')
-    //  }
-
-    return NextResponse.next()
-  
-   //return new Response(request)
+  if (!session) {
+    const requestedPage = req.nextUrl.pathname;
+    const url = req.nextUrl.clone();
+    url.pathname = `/auth/login`;
+    url.search = `p=${requestedPage}`;
+    return NextResponse.redirect(url);
   }
+
+  return NextResponse.next();
 }
+
+// See "Matching Paths" below to learn more
+export const config = {
+  matcher: ["/checkout/address", "/checkout/summary"],
+};

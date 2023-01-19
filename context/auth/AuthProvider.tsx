@@ -6,7 +6,7 @@ import { tesloApi } from "../../api/tesloApi";
 import axios from "axios";
 import Cookie from "js-cookie";
 import { useRouter } from "next/router";
-//import { useRouter } from 'next/router';
+import { useSession, signOut } from 'next-auth/react';
 
 export interface AuthState {
   isLoggedIn: boolean;
@@ -27,12 +27,24 @@ const INITIAL_STATE: AuthState = {
 
 export const AuthProvider = ({ children }: Props) => {
   const [state, dispatch] = useReducer(authReducer, INITIAL_STATE);
-
+  const { data, status } = useSession();
   const router = useRouter();
 
+
+  //!Ya no usamos este efecto porque ahora usamos nextauth
+  // useEffect(() => {
+  //   checkToken();
+  // }, []);
+
+
   useEffect(() => {
-    checkToken();
-  }, []);
+        
+    if ( status === 'authenticated' ) {
+        console.log({user: data?.user});
+        dispatch({ type: '[Auth] - Login', payload: data?.user as IUser })
+    }
+
+}, [ status, data ])
 
   useEffect(() => {
     console.log(router.asPath);
