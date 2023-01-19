@@ -133,8 +133,9 @@ export const AuthProvider = ({ children }: Props) => {
   const logout = () => {
     Cookie.remove("token");
     Cookie.remove("cart");
+    signOut();
     //!Esto borra todos los datos del estado y se puede usar en logar del dispatch logout que esta en el authReducer
-    router.reload();
+    //router.reload();
   };
   return (
     <AuthContext.Provider
