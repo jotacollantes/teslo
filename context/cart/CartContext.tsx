@@ -1,7 +1,6 @@
 import { createContext } from "react";
-import { ICartProduct } from "../../interfaces";
-import { FormData as FormDataAddress } from "../../pages/checkout/address";
-FormData
+import { ICartProduct, ShippingAddress } from "../../interfaces";
+
 interface ContextProps {
   isLoaded: boolean;
   cart: ICartProduct[]; // Sera un Array de ICartProduct
@@ -9,13 +8,14 @@ interface ContextProps {
   subTotal: number;
   taxCart: number;
   total: number;
-  shippingAddress?: FormDataAddress;
+  shippingAddress?: ShippingAddress;
 
   //!Methods
   addProductToCart: (product: ICartProduct) => void;
   updateCartQuantity: (product: ICartProduct) => void;
   removeItem: (product: ICartProduct) => void;
-  updateAddress: (adress: FormDataAddress) => void;
+  updateAddress: (adress: ShippingAddress) => void;
+  createOrder: () => Promise<void>
 }
 
 export const CartContext = createContext({} as ContextProps);

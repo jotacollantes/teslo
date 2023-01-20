@@ -1,9 +1,10 @@
 import React, {FC, useEffect, useReducer } from "react";
-import { ICartProduct } from "../../interfaces";
+import { ICartProduct, ShippingAddress } from "../../interfaces";
 import { CartContext, cartReducer } from "./";
 import Cookie from 'js-cookie';
 //import { IProduct } from '../../interfaces/products';
-import { FormData as FormDataAddress } from "../../pages/checkout/address"
+//import { FormData as FormDataAddress } from "../../pages/checkout/address"
+import { tesloApi } from '../../api/tesloApi';
 
 
 export interface CartState {
@@ -13,7 +14,7 @@ export interface CartState {
   subTotal: number;
   taxCart: number;
   total: number;
-  shippingAddress?: FormDataAddress;
+  shippingAddress?: ShippingAddress;
 }
 
 interface Props {
@@ -44,9 +45,9 @@ export const CartProvider = ({ children }: Props) => {
        //const cookieCart=  JSON.parse(Cookie.get('cart')!)
        dispatch({type: "[Cart] - LoadCart from cookies",payload: cookieCart })
       
-       console.log('leyo la cookie primero',cookieCart)
+       //console.log('leyo la cookie primero',cookieCart)
     } catch (error) {
-      console.log(error)
+      //console.log(error)
       dispatch({type: "[Cart] - LoadCart from cookies",payload: [] })
       //console.log('No se leyo la cookie',error)
     }
@@ -73,7 +74,7 @@ export const CartProvider = ({ children }: Props) => {
 useEffect(() => {
   //console.log('entro por aqui',state.cart)
    //console.log('grabando cookies', state.cart)
-   console.log('state: ',state.cart)
+   //console.log('state: ',state.cart)
  Cookie.set('cart', JSON.stringify(state.cart));
  
 }, [state.cart]);
@@ -150,10 +151,21 @@ useEffect(() => {
       dispatch({ type: "[Cart] - Remove product in cart", payload: product });
     }
 
-    const updateAddress =(adress:FormDataAddress)=>{
+    const updateAddress =(adress:ShippingAddress)=>{
       dispatch({ type: "[Cart] - Update Address", payload: adress });
 
     }
+
+const createOrder = async()=>{
+
+  try {
+    const {data}=await tesloApi.post('/orders')
+    console.log(data)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 
   return (
     <CartContext.Provider
@@ -162,7 +174,8 @@ useEffect(() => {
         addProductToCart,
         updateCartQuantity,
         removeItem,
-        updateAddress
+        updateAddress,
+        createOrder
         
       }}
     >

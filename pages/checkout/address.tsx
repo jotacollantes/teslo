@@ -18,19 +18,11 @@ import Cookie from "js-cookie";
 import { useRouter } from "next/router";
 
 import { CartContext } from "../../context";
+import { ShippingAddress } from "../../interfaces";
 
-export interface FormData {
-  firstname: string;
-  lastname: string;
-  address: string;
-  address2?: string;
-  zip: string;
-  city: string;
-  country: string;
-  phone: string;
-}
 
-const getAddressFromCookies = (): FormData => {
+
+const getAddressFromCookies = (): ShippingAddress => {
   const cookieData = Cookie.get("address")
     ? JSON.parse(Cookie.get("address")!)
     : {};
@@ -46,7 +38,7 @@ const AddressPage = () => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<ShippingAddress>({
     defaultValues: getAddressFromCookies(),
     //{
     // firstname:'',
@@ -60,7 +52,7 @@ const AddressPage = () => {
     //}
   });
 
-  const onSendAddress = async (data: FormData) => {
+  const onSendAddress = async (data: ShippingAddress) => {
     //!Grabamos la cookie
     Cookie.set("address", JSON.stringify(data));
 

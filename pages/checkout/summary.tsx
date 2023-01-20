@@ -18,7 +18,11 @@ import { countries } from "../../utils";
 import { PaidSharp } from "@mui/icons-material";
 
 const SummaryPage = () => {
-  const { shippingAddress, numberOfItems } = useContext(CartContext);
+  const { shippingAddress, numberOfItems,createOrder } = useContext(CartContext);
+
+  const onCreateOrder =()=>{
+    createOrder()
+  }
   return (
     <ShopLayout
       title={"Resumen de Orden"}
@@ -77,7 +81,11 @@ const SummaryPage = () => {
               {/* Order Sumary */}
               <OrderSumary />
               <Box sx={{ mt: 3 }}>
-                <Button color={"secondary"} className="circular-btn" fullWidth>
+                <Button
+                onClick={onCreateOrder}
+                color={"secondary"}
+                className="circular-btn"
+                fullWidth>
                   Confirmar orden
                 </Button>
               </Box>
