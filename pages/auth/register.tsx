@@ -15,7 +15,9 @@ import { tesloApi } from "../../api";
 import { AuthLayout } from "../../components/layouts";
 import { validations } from "../../utils";
 import { AuthContext } from '../../context/auth/AuthContext';
-import { useRouter } from 'next/router';
+import router, { useRouter } from 'next/router';
+import { GetServerSideProps } from "next";
+import { signIn, getSession } from 'next-auth/react';
 
 type FormData = {
   name: string;
@@ -35,7 +37,10 @@ const RegisterPage = () => {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('')
   const {registerUser,urlDestination} = useContext(AuthContext)
-  const router =useRouter()
+  //const router =useRouter()
+
+
+
   const onCreateUser = async ({ name, email, password }: FormData) => {
     setShowError(false);
 
@@ -51,9 +56,8 @@ const RegisterPage = () => {
       }, 3000);
       return;
       }
-
-      //router.replace('/')
-      router.replace(urlDestination)
+      //router.replace(urlDestination)
+      await signIn('credentials',{ email, password });
   };
   return (
     <AuthLayout title={"Crear Usuario"}>
@@ -147,7 +151,11 @@ const RegisterPage = () => {
             </Grid>
 
             <Grid item xs={12} display={"flex"} justifyContent="end">
-              <NextLink href={"/auth/login"} passHref legacyBehavior>
+              <NextLink
+              //href={"/auth/login"}
+              href={ router.query.p ? `/auth/login?p=${ router.query.p }`: '/auth/login'}
+              passHref
+              legacyBehavior>
                 <Link underline="always"> Ya tienes Cuenta?</Link>
               </NextLink>
             </Grid>
@@ -158,4 +166,29 @@ const RegisterPage = () => {
   );
 };
 
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  query,
+}) => {
+  const session = await getSession({ req });
+  // console.log({session});
+
+  const { p = "/" } = query;
+  //const { path } = req.cookies;
+  //console.log("Path:", path);
+  if (session) {
+    return {
+      redirect: {
+        //!Como puede ser array lo convierto en un string
+        destination: p.toString(),
+        //destination: path!,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
 export default RegisterPage;

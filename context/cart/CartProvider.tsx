@@ -1,7 +1,7 @@
-import React, { useEffect, useReducer } from "react";
+import React, {FC, useEffect, useReducer } from "react";
 import { ICartProduct } from "../../interfaces";
 import { CartContext, cartReducer } from "./";
-import Cookie from "js-cookie";
+import Cookie from 'js-cookie';
 //import { IProduct } from '../../interfaces/products';
 import { FormData as FormDataAddress } from "../../pages/checkout/address"
 
@@ -32,20 +32,23 @@ const INITIAL_STATE: CartState = {
   shippingAddress: undefined 
 };
 
+
 export const CartProvider = ({ children }: Props) => {
   const [state, dispatch] = useReducer(cartReducer, INITIAL_STATE);
-
-
-  //!Para leer las cookies y que el carrito sea persistente
+  
+ //!Para leer las cookies y que el carrito sea persistente
   useEffect(() => {
-    
+                        
     try {
-       const cookieCart= Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!):[]
+      const cookieCart= Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!):[]
+       //const cookieCart=  JSON.parse(Cookie.get('cart')!)
        dispatch({type: "[Cart] - LoadCart from cookies",payload: cookieCart })
-       console.log('leyo la cookie',cookieCart)
+      
+       console.log('leyo la cookie primero',cookieCart)
     } catch (error) {
+      console.log(error)
       dispatch({type: "[Cart] - LoadCart from cookies",payload: [] })
-      console.log('No se leyo la cookie',error)
+      //console.log('No se leyo la cookie',error)
     }
    
  }, []);
@@ -57,24 +60,26 @@ export const CartProvider = ({ children }: Props) => {
     try {
        const cookieAddress= Cookie.get('address') ? JSON.parse(Cookie.get('address')!):undefined
        dispatch({type: "[Cart] - LoadAddress from cookies",payload: cookieAddress })
-       console.log('leyo la cookie',cookieAddress)
+       //console.log('leyo la cookie',cookieAddress)
     } catch (error) {
       dispatch({type: "[Cart] - LoadAddress from cookies",payload: undefined })
-      console.log('No se leyo la cookie',error)
+      //console.log('No se leyo la cookie',error)
     }
    
  }, []);
 
 
+//!Para grabar las cookies y que el carrito sea persistente
+useEffect(() => {
+  //console.log('entro por aqui',state.cart)
+   //console.log('grabando cookies', state.cart)
+   console.log('state: ',state.cart)
+ Cookie.set('cart', JSON.stringify(state.cart));
+ 
+}, [state.cart]);
 
 
 
-
-  //!Para grabar las cookies y que el carrito sea persistente
-  useEffect(() => {
-     console.log('grabando cookies', state.cart)
-    Cookie.set('cart', JSON.stringify(state.cart));
-  }, [state.cart]);
 
   useEffect(() => {
     let numberOfItems=0

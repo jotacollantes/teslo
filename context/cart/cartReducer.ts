@@ -25,12 +25,17 @@ export const cartReducer = (
 ): CartState => {
   switch (action.type) {
     case "[Cart] - LoadCart from cookies":
+      //console.log('entro al reducer: [Cart] - LoadCart from cookies',action.payload)
       return {
+        
         ...state,
-        cart: action.payload,
+        //cart: action.payload,
+        isLoaded:true,
+        cart: [...action.payload]
       };
     //break;
     case "[Cart] - Add Product":
+      //console.log('entro al reducer: [Cart] - Add Product',action.payload)
       return {
         //!Propago todas las propiedades del estado
         ...state,

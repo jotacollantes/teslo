@@ -17,25 +17,24 @@ import { useRouter } from "next/router";
 import NextLink from "next/link";
 
 
-const index = () => {
+const Index = () => {
   const { isLoaded, cart } = useContext(CartContext);
   const router = useRouter();
+
+
+
+
   useEffect(() => {
-    //console.log(isLoaded,cart.length)
-    //   if(isLoaded && cart.length===0){
-    //         router.replace('/cart/empty')
-    //   }
-    if (cart.length === 0) {
-      router.replace("/cart/empty");
+    if ( isLoaded && cart.length === 0 ){
+      router.replace('/cart/empty');
     }
-
-    //}, [isLoaded,cart.length,router])
-  }, [cart.length]);
-
-  //if (!isLoaded){
+  }, [ isLoaded, cart, router ])
+  
   //!Para que no se vea de manera temporal los datos del resumen de la compra, se envia el fragmento vacio al momento de renderizar el componente. inmediatamente despues de renderizar el fragmento vacio se ejecuta el efecto
-  if (cart.length === 0) return <></>;
 
+  if ( !isLoaded || cart.length === 0 ) {
+    return (<></>);
+}
   return (
     <ShopLayout
       title={"Carrito - 3"}
@@ -81,6 +80,6 @@ const index = () => {
 
 
 
-export default index;
+export default Index;
 
 

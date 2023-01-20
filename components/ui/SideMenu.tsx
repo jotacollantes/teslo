@@ -32,7 +32,7 @@ export const SideMenu = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
 
-  const { isLoggedIn, user,logout } = useContext(AuthContext);
+  const { isLoggedIn, user, logout } = useContext(AuthContext);
 
   const onSearchTerm = () => {
     //!SI esta vacio no hace nada
@@ -141,27 +141,22 @@ export const SideMenu = () => {
           </ListItem>
 
           {!isLoggedIn ? (
-            
-              <ListItem
-              onClick={() => navigateTo("/auth/login")}
-              >
-                <ListItemIcon>
-                  <VpnKeyOutlined />
-                </ListItemIcon>
-                <ListItemText primary={"Ingresar"} />
-              </ListItem>
-            
+            <ListItem
+              //onClick={() => navigateTo("/auth/login")}
+              onClick={() => navigateTo(`/auth/login?p=${router.asPath}`)}
+            >
+              <ListItemIcon>
+                <VpnKeyOutlined />
+              </ListItemIcon>
+              <ListItemText primary={"Ingresar"} />
+            </ListItem>
           ) : (
-          
-              <ListItem 
-              onClick={logout}
-              >
-                <ListItemIcon>
-                  <LoginOutlined />
-                </ListItemIcon>
-                <ListItemText primary={"Salir"} />
-              </ListItem>
-            
+            <ListItem onClick={logout}>
+              <ListItemIcon>
+                <LoginOutlined />
+              </ListItemIcon>
+              <ListItemText primary={"Salir"} />
+            </ListItem>
           )}
 
           {user?.role === "admin" && (

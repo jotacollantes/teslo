@@ -47,11 +47,11 @@ export const AuthProvider = ({ children }: Props) => {
 }, [ status, data ])
 
   useEffect(() => {
-    console.log(router.asPath);
+    //console.log(router.asPath);
 
     if (router.asPath === "/auth/login" || router.asPath === "/auth/register")
       return;
-
+    Cookie.set('path',router.asPath) 
     dispatch({ type: "[Auth] - Url", payload: router.asPath });
   }, [router.asPath]);
 
@@ -105,9 +105,9 @@ export const AuthProvider = ({ children }: Props) => {
         password: password,
       });
       const { token, user } = data;
-      //console.log({ token, user });
-      Cookie.set("token", token);
-      //Cuando se crea el usario tambien se hace el login
+      //!Este Token ya no se usa porque ahora se usan los que genera el nexauth
+      //Cookie.set("token", token);
+      //*Cuando se crea el usario tambien se hace el login y se debe de actualizar el state
       dispatch({ type: "[Auth] - Login", payload: user });
       //Todo return
       return {

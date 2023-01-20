@@ -35,7 +35,7 @@ export default function SearchPage({ products, foundProducts, query }: Props) {
           <Typography variant="h2" sx={{ marginBottom: 1 }}>
          No encontramos ningun producto
         </Typography>
-        <Typography variant="h2" sx={{ marginLeft: 1 }} color='secondary' textTransform='capitalize'>>
+        <Typography variant="h2" sx={{ marginLeft: 1 }} color='secondary' textTransform='capitalize'>
         {query}
         </Typography>
         </Box>
