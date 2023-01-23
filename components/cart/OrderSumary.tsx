@@ -3,8 +3,28 @@ import React, { useContext } from "react";
 import { CartContext } from "../../context";
 import { currency } from "../../utils";
 
-export const OrderSumary = () => {
-  const {cart,numberOfItems,subTotal,taxCart,total} = useContext(CartContext)
+
+interface Props{
+  resumen?: {
+    numberOfItems: number,
+    subTotal: number,
+    taxCart: number,
+    total: number,
+
+  },
+  adicional?:string
+}
+
+export const OrderSumary = ({resumen,adicional}:Props) => {
+  
+
+
+
+
+    const {numberOfItems,subTotal,taxCart,total} = 
+    (!resumen) ? useContext(CartContext) : resumen
+  
+  
   return (
     <Grid container>
       <Grid item xs={6} sx={{ border: 0 }}>

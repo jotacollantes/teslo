@@ -3,12 +3,13 @@ import {
   Button,
   Card,
   CardContent,
+  Chip,
   Divider,
   Grid,
   Link,
   Typography,
 } from "@mui/material";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { CardList } from "../../components/cart";
 import { ShopLayout } from "../../components/layouts/";
 import { OrderSumary } from "../../components/cart/OrderSumary";
@@ -16,12 +17,47 @@ import NextLink from "next/link";
 import { CartContext } from "../../context";
 import { countries } from "../../utils";
 import { PaidSharp } from "@mui/icons-material";
+import { useRouter } from "next/router";
+import Cookie from 'js-cookie';
+
 
 const SummaryPage = () => {
+  const router =useRouter()
   const { shippingAddress, numberOfItems,createOrder } = useContext(CartContext);
 
-  const onCreateOrder =()=>{
-    createOrder()
+
+useEffect(() => {
+ if (!Cookie.get("address") )
+  {
+    //! router.push siempre se debe de usar dentro de useEffect
+    router.push('/checkout/address')
+  }
+}, [router])
+
+
+
+if (!shippingAddress){
+   return <></>
+  }
+
+
+  const [isChargingOrder, setIsChargingOrder] = useState(false)
+ const [errorOrderMessage, setErrorOrderMessage] = useState('')
+
+  const onCreateOrder =async ()=>{
+    setIsChargingOrder(true)
+    const{hasError,message}=await createOrder()
+
+    if (hasError){
+      setErrorOrderMessage(message)
+      setIsChargingOrder(false)
+      return;
+
+
+    }
+    //! Para que el usuario no pueda regresar a la pagina anterior o sea a la de summary
+    router.replace(`/orders/${message}`)
+
   }
   return (
     <ShopLayout
@@ -80,14 +116,24 @@ const SummaryPage = () => {
               </Box>
               {/* Order Sumary */}
               <OrderSumary />
-              <Box sx={{ mt: 3 }}>
+              <Box sx={{ mt: 3 }} display="flex" flexDirection={'column'}>
                 <Button
                 onClick={onCreateOrder}
                 color={"secondary"}
                 className="circular-btn"
-                fullWidth>
+                fullWidth
+                disabled={isChargingOrder}>
                   Confirmar orden
                 </Button>
+                <Chip
+                color="error"
+                label={errorOrderMessage}
+                sx={{display: errorOrderMessage? 'flex' : 'none',mt:2}}
+                />
+
+                
+
+
               </Box>
             </CardContent>
           </Card>

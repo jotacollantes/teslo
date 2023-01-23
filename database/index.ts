@@ -6,4 +6,5 @@ export * as dbProducts from './dbProduct'
 export * as seedDatabase from './seed-data'
 
 export * as dbUsers from './dbUsers'
+export * as dbOrders from './dbOrders'
 

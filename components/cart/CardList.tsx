@@ -11,12 +11,13 @@ import NextLink from "next/link";
 import React, { useContext } from "react";
 import { CartContext } from "../../context";
 import { ItemCounter } from "../products/ItemCounter";
-import { ICartProduct } from "../../interfaces";
+import { ICartProduct, IOrderItem } from "../../interfaces";
 
 interface Props {
   editable: boolean;
+  products?:IOrderItem[]
 }
-export const CardList = ({ editable }: Props) => {
+export const CardList = ({ editable,products }: Props) => {
   const {cart,addProductToCart,updateCartQuantity,removeItem} = useContext(CartContext)
 
 
@@ -28,9 +29,11 @@ export const CardList = ({ editable }: Props) => {
   const onRemoveItem =(product:ICartProduct)=>{
       removeItem(product)
   }
+
+  const productsToShow= products ? products : cart
   return (
     <>
-      {cart.map((product, ix) => {
+      {productsToShow.map((product, ix) => {
         return (
           <Grid container spacing={2} key={ix} sx={{ mb: 1 }}>
             <Grid item xs={3}>
@@ -61,7 +64,7 @@ export const CardList = ({ editable }: Props) => {
                   maxValue={10}
                   updatedQuantity={
                     //!Envio como parametro el value que me emite el prop updateQuantiy y el product que estoy iterando dentro del map
-                    (value)=>onNewCartQuantityValue(product,value)
+                    (value)=>onNewCartQuantityValue(product as ICartProduct,value)
                   } />
                 ) : (
                   <Typography variant="h6">{product.quantity} {product.quantity ===1 ? 'Item' :  'Items'}</Typography>
@@ -81,7 +84,7 @@ export const CardList = ({ editable }: Props) => {
                 <Button
                 variant="text"
                 color="secondary"
-                onClick={()=>onRemoveItem(product)}
+                onClick={()=>onRemoveItem(product as ICartProduct)}
                 >
                   {" "}
                   remover

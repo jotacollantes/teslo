@@ -38,15 +38,17 @@ const LoginPage = () => {
   const [showError, setShowError] = useState(false);
 
   const [providers, setProviders] = useState<any>({});
-
+   
+  
   useEffect(() => {
     getProviders().then((prov) => {
-      // console.log({prov});
+      //console.log({prov});
       setProviders(prov);
+      
     });
   }, []);
-
-  //console.log(Object.values(providers))
+   
+  console.log(Object.values(providers))
 
   const onLoginUser = async ({ email, password }: FormData) => {
     //!No muestro el <Chip/>
@@ -168,6 +170,7 @@ const LoginPage = () => {
             >
               <Divider sx={{ width: "100%", mb: 2 }} />
               {Object.values(providers).map((provider: any) => {
+               
                 if (provider.id === "github")
                 {
                   return (

@@ -1,10 +1,11 @@
 import React, {FC, useEffect, useReducer } from "react";
-import { ICartProduct, ShippingAddress } from "../../interfaces";
+import { ICartProduct, IOrder, ShippingAddress } from "../../interfaces";
 import { CartContext, cartReducer } from "./";
 import Cookie from 'js-cookie';
 //import { IProduct } from '../../interfaces/products';
 //import { FormData as FormDataAddress } from "../../pages/checkout/address"
 import { tesloApi } from '../../api/tesloApi';
+import axios from "axios";
 
 
 export interface CartState {
@@ -156,13 +157,48 @@ useEffect(() => {
 
     }
 
-const createOrder = async()=>{
+const createOrder = async():Promise<{hasError:boolean;message:string;}>=>{
+
+  if(!state.shippingAddress){
+    throw new Error('No hay datos de direccion')
+
+  }
+
+  const body:IOrder={
+    orderItems: state.cart,
+    shippingAddress: state.shippingAddress,
+    numberOfItems  : state.numberOfItems,
+    subTotal       : state.subTotal,
+    taxCart        : state.taxCart,
+    total          : state.total,
+    isPaid         : false
+  }
 
   try {
-    const {data}=await tesloApi.post('/orders')
-    console.log(data)
+    const {data}=await tesloApi.post<IOrder>('/orders',body)
+    //console.log(data)
+    
+    //TODO dispatch
+    //Para dejar  la cookie de cart en []
+    dispatch({type:'[Cart] - Order Complete'})
+    return {
+      hasError:false,
+      message:data._id!
+    }
   } catch (error) {
-    console.log(error)
+    //console.log(error)
+    //* Si es un error de axios
+    if(axios.isAxiosError(error)){
+      return{
+        hasError:true,
+        message:error.response?.data.message
+      }
+    }
+    //* si no es un error de axios
+    return{
+      hasError:true,
+      message:'Error no controlado hable con el administrador'
+    }
   }
 }
 
