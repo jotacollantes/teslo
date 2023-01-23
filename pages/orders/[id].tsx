@@ -65,7 +65,7 @@ const OrderPage = ({order,propiedad}:Props) => {
       
       
 
-      <Grid container sx={{ mt: 3 }}>
+      <Grid container sx={{ mt: 3 }} className='fadeIn'>
         <Grid item xs={12} sm={7}>
           {/* Card List */}
           <CardList editable={false} products={order.orderItems}/>
@@ -142,7 +142,7 @@ export const getServerSideProps: GetServerSideProps = async ({req,query}) => {
 
     //* Obtengo los datos de la orden
     const order= await dbOrders.getOrderById(id!.toString())
-    console.log('Datos Orden: ',order)
+    //console.log('Datos Orden: ',order)
     if (!order)
     {
       //console.log('validacion datos de la orden')
