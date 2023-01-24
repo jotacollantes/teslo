@@ -7,11 +7,14 @@ import { SWRConfig } from "swr";
 import { UIProvider } from "../context/";
 import { CartProvider } from "../context";
 import { AuthProvider } from "../context";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <SessionProvider>
-      <SWRConfig
+        <PayPalScriptProvider options={{'client-id':process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!}}>
+
+          <SWRConfig
         value={{
           //refreshInterval: 3000,
           fetcher: (resource, init) =>
@@ -29,6 +32,9 @@ export default function App({ Component, pageProps }: AppProps) {
           </CartProvider>
         </AuthProvider>
       </SWRConfig>
+        </PayPalScriptProvider>
+      
+
     </SessionProvider>
   );
 }

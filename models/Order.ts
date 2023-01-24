@@ -32,7 +32,9 @@ const orderSchema = new Schema(
         taxCart:{ type: Number, required: true },      
         total :{ type: Number, required: true },       
         isPaid   :{ type: Boolean, required: true,default:false },    
-        paidAt:{ type: String}       
+        paidAt:{ type: String},
+      
+        transactionId:{ type: String}
 
 
 

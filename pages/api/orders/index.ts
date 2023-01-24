@@ -80,6 +80,8 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
      //Todo bien hasta este punto ya podemos grabar en mongo
      const userId=session.user._id;
      const newOrder =new Order({...req.body,user:userId,isPaid:false})
+    //!Para redondear a 2 decimales usamos Math.round, la funcion toFixed no sirve porque devuelve un string y la propiedad new.Order.total espera un number
+     newOrder.total=Math.round(newOrder.total*100)/100
      await newOrder.save()
      await db.disconnect()
      return res.status(201).json(newOrder);
