@@ -65,11 +65,15 @@ const payOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
   //TODO Validar session del usuario
   //TODO Validar Mongo ID
+
+  //!Llamo a la funcion getPaypalBearerToken para obtener el token
   const paypalBearerToken = await getPaypalBearerToken();
 
+  //!SI el token es null se envia mensaje al usuario
   if (!paypalBearerToken) {
     res.status(400).json({ message: "No se pudo generar token" });
   }
+  //!Obtengo el idtransaction y el id de mongo que vienen en el body del http request
   const { transactionid, orderid } = req.body;
 
   const { data } = await axios.get<IPaypal.PaypalOrderStatusResponse>(
@@ -81,17 +85,23 @@ const payOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     }
   );
 
-  if (data.status !== 'COMPLETED'){
+  //!Valido si la transaccion esta completa
+   if (data.status !== 'COMPLETED'){
     res.status(400).json({ message: 'Pago no fue completado' });
   }
   db.connect()
+
+
+  //!Creo dbOrder que va a mapear el modelo Orden
+  //!BUsco la orden
   const dbOrder= await Order.findById(orderid)
   if (!dbOrder){
     await db.disconnect()
     res.status(400).json({ message: 'Orden no existe' });
   }
 
-  //*los values en la data vienen en string.
+   //!Valido si los montos son iguales en el backend y en la data enviada desde paypal
+  //*los values en la data (JSON) enviados desde paypal vienen en string.
   if (dbOrder?.total !== Number(data.purchase_units[0].amount.value))
   {
     await db.disconnect()
@@ -99,9 +109,11 @@ const payOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   }
 
    //* en este punto la orden si existe por eso uso el dbOrder!.
-   //*Procedemo a actualizar el registro
+   //*Procedemos a actualizar el registro
   dbOrder!.transactionId=transactionid
   dbOrder!.isPaid=true
+
+  //!Actualizo los datos en dbOrder
   await dbOrder!.save()
   await db.disconnect()
   
