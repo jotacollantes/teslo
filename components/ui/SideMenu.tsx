@@ -16,6 +16,7 @@ import {
   AdminPanelSettings,
   CategoryOutlined,
   ConfirmationNumberOutlined,
+  DashboardOutlined,
   EscalatorWarningOutlined,
   FemaleOutlined,
   LoginOutlined,
@@ -51,6 +52,8 @@ export const SideMenu = () => {
   ) => {
     setSearchTerm(e.target.value);
   };
+
+  console.log(user?.role)
 
   return (
     <Drawer
@@ -160,13 +163,23 @@ export const SideMenu = () => {
               <ListItemText primary={"Salir"} />
             </ListItem>
           )}
-
+          {/* Admin */}
           {user?.role === "admin" && (
             <>
-              {/* Admin */}
+             
               <Divider />
 
               <ListSubheader>Admin Panel</ListSubheader>
+              <ListItem
+              onClick={()=>{
+                navigateTo('/admin')
+              }}
+              >
+                <ListItemIcon>
+                  <DashboardOutlined />
+                </ListItemIcon>
+                <ListItemText primary={"Dashboard"} />
+              </ListItem>
 
               <ListItem button>
                 <ListItemIcon>
