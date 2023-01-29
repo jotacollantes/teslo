@@ -53,7 +53,7 @@ export const SideMenu = () => {
     setSearchTerm(e.target.value);
   };
 
-  console.log(user?.role)
+  //console.log(user?.role)
 
   return (
     <Drawer
@@ -94,7 +94,7 @@ export const SideMenu = () => {
 
           {isLoggedIn && (
             <>
-              <ListItem button>
+              <ListItem >
                 <ListItemIcon>
                   <AccountCircleOutlined />
                 </ListItemIcon>
@@ -113,7 +113,7 @@ export const SideMenu = () => {
           )}
 
           <ListItem
-            button
+            
             sx={{ display: { xs: "", sm: "none" } }}
             onClick={() => navigateTo("/category/men")}
           >
@@ -181,21 +181,23 @@ export const SideMenu = () => {
                 <ListItemText primary={"Dashboard"} />
               </ListItem>
 
-              <ListItem button>
+              <ListItem >
                 <ListItemIcon>
                   <CategoryOutlined />
                 </ListItemIcon>
                 <ListItemText primary={"Productos"} />
               </ListItem>
 
-              <ListItem button>
+              <ListItem >
                 <ListItemIcon>
                   <ConfirmationNumberOutlined />
                 </ListItemIcon>
                 <ListItemText primary={"Ordenes"} />
               </ListItem>
 
-              <ListItem button>
+              <ListItem
+              onClick={() => navigateTo("/admin/users")}
+              >
                 <ListItemIcon>
                   <AdminPanelSettings />
                 </ListItemIcon>

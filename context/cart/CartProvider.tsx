@@ -114,12 +114,13 @@ useEffect(() => {
     //todo dispatch
     //console.log(state.cart)
 
-    //! Si no hay productos con el mismo id y misma size se ejecuta el dispatch [...state.cart,product]
+    //! Se evalua si existe el producto que se intenta añadir al carrito. Tiene que ser del mismo _id y del mismo size 
     const productsInCart = state.cart.some(
       (productItem) =>
         productItem._id == product._id && productItem.size == product.size
     );
     //console.log(productsInCart)
+     //! Si no hay productos con el mismo id y misma size se ejecuta el dispatch [...state.cart,product]
     if (!productsInCart) {
       return dispatch({
         type: "[Cart] - Add Product",
