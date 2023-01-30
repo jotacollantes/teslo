@@ -2,7 +2,7 @@ import React from "react";
 import { GetServerSideProps } from 'next'
 import { ShopLayout } from "../../components/layouts";
 import { Chip, Grid, Typography, Link } from "@mui/material";
-import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRenderCellParams, } from "@mui/x-data-grid";
 import NextLink from "next/link";
 import { getSession } from 'next-auth/react';
 import { dbOrders } from "../../database";

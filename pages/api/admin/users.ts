@@ -14,7 +14,7 @@ switch (req.method) {
     case 'GET':
         return getUsers(req,res)
         
-    case 'POST':
+    case 'PUT':
         
       return updateUser(req,res)
     default:
@@ -29,18 +29,21 @@ const getUsers=async(req: NextApiRequest, res: NextApiResponse<Data>) =>{
     const users = await User.find().select('-password').lean()
     await db.disconnect
     //*Tengo que definir el type para users del tipo IUser[] en la response
+    
     return res.status(200).json(users)
 
 }
 const updateUser=async(req: NextApiRequest, res: NextApiResponse<Data>)=> {
     
+
+   
     const {userId='',role=''}=req.body
     if (!isValidObjectId){
         return res.status(400).json({ message: 'Id Invalido' })
     }
-
-    const validRoles=['admin','super-admin','SEO']
-    if(validRoles.includes(role))
+    
+    const validRoles=['admin','client','super-admin','SEO']
+    if(!validRoles.includes(role))
     {
         return res.status(400).json({ message: `Rol Invalido. Roles validos ${validRoles}` })
     }

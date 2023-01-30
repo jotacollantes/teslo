@@ -3,7 +3,7 @@ export interface IUser {
   name: string;
   email: string;
   password?: string;
-  role: "client" | "admin";
+  role: string;
   createdAt?: string;
   updatedAt?: string;
 }

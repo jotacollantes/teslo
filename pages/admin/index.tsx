@@ -13,7 +13,7 @@ import { FullScreenLoading } from "../../components/ui";
 const DashBoard = () => {
   //* con useSWR primero se toma los datos del  cache y se revalida con la respuesta de un http request, si hay cambios se pinta la informacion de la request caso contrario se mantiene la del cache
   //! la consulta al api del dashboard se hara cada 30 segundos directamente desde el frontend gracias al SWR
-  const {data,error} = useSWR<dashboardResponse>('/api/admin/dashboard/',{refreshInterval: 30 * 1000})
+  const {data,error,isLoading} = useSWR<dashboardResponse>('/api/admin/dashboard/',{refreshInterval: 30 * 1000})
   const [refreshIn, setRefreshIn] = useState(30)
 
 
@@ -38,7 +38,8 @@ const DashBoard = () => {
 
 
   //*La pagina se va a generar de manera estatica y aun no se llama al endpoint /admin/dashboard y no tenemos la data ni el error
-  if(!error && !data) {
+  //if(!error && !data) {
+    if(isLoading) {
     //return <><h1>Cargando....</h1></>
     return <><FullScreenLoading/></>
   }

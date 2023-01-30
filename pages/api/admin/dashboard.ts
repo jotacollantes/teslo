@@ -22,7 +22,7 @@ export default async function handler(
 ) {
   await db.connect();
 
-  //* Hay 2 maneras de hacer las consultas: con .countDocuments() o .find().count y si son todos los documentos sin ninguna condicion usamos .count()
+  //* Hay 2 maneras de hacer las consultas con mongoose: con .countDocuments() o .find().count y si son todos los documentos sin ninguna condicion usamos .count()
   //*const numberOfOrders = await Order.countDocuments({})
   //*const paidOrders = await Order.countDocuments({isPaid:true})
   //*const notPaidOrders = await Order.countDocuments({isPaid:false})
