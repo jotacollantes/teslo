@@ -7,7 +7,7 @@ export async function middleware(req: NextRequest) {
   //     const token=request.cookies.get('token')?.value
   //     return NextResponse.next()
   //  }
-  //console.log('ENTRO AL MIDDLEWARE')
+  
   const session: any = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
@@ -17,6 +17,7 @@ export async function middleware(req: NextRequest) {
   const requestedPage = req.nextUrl.pathname;
   const url = req.nextUrl.clone();
 
+  //console.log('entro al middleware')
   if (!session) {
     console.log("Middleware: No hay session");
     //*EN este punto se evalua si el request  es por API
@@ -32,10 +33,11 @@ export async function middleware(req: NextRequest) {
   //* En este punto si existe session
 
   //* En este punto se evalua si quieren entrar a /admin. Por default se evalua "Matching Paths"
-
+  
   if (req.nextUrl.pathname.match("/admin")) {
+    //console.log("Path: ",req.nextUrl.pathname.match("/admin"))
     const validateRoles = ["admin", "super-admin", "root"];
-    console.log("middleware role: ", session.user.role);
+    //console.log("middleware role: ", session.user.role);
     if (!validateRoles.includes(session.user.role)) {
       url.pathname = "/";
       return NextResponse.redirect(url);
@@ -51,6 +53,7 @@ export const config = {
     "/checkout/address",
     "/checkout/summary",
     "/admin",
+    "/admin/orders/:id*",
     "/api/admin/dashboard",
   ],
 };
