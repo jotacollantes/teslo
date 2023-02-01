@@ -41,7 +41,8 @@ export const getProductBySlug=async(slug:string):Promise<IProduct|null> =>{
 
    //*De esta manera solo devuelve JSON
    //console.log( JSON.stringify(product))
-   //*Hay que convertirlo a un objeto literal de java script ya que viene en formato de Mongo Object  y especialemte por el _id: new ObjectId("63b70452a161d2916d6b03d4") ya que la respuesta incluye todo los campos
+   //*Hay que convertirlo a un objeto literal de javascript ya que estamos solicitando toda la informacion y los campos _id, createdAt, updatedAt vienen en formato de Mongo ejemplo: _id: new ObjectId("63b70452a161d2916d6b03d4") y el formato de campo de fechas //     createdAt: 2023-01-05T17:09:39.001Z, updatedAt: 2023-01-05T17:09:39.001Z
+   //Todo procesamiento de las imagenes cuando las subimos al server
    return JSON.parse(JSON.stringify(product))
    //return product
 
