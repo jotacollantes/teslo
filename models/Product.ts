@@ -3,7 +3,7 @@ import { IProduct } from '../interfaces'
 
 //! Creamos una instancia de Schema
 const productSchema = new Schema({
-    description: {type: String,required:true},
+    description: {type: String,required:true,default:''},
     //*Puede haber mas de una imagen o ninguna la definimos como array
     images: [{type: String}],
     inStock: {type:Number,required: true,default:0},
@@ -19,20 +19,22 @@ const productSchema = new Schema({
     slug: {type: String,required:true,unique:true},
     //!Puede haber mas un tag o ninguno, lo definimos como array
     tags: [{type: String}],
-    title: {type: String,required:true},
+    title: {type: String,required:true,default:''},
     type: {
         type:String,
         enum:{
             values:['shirts','pants','hoodies','hats'],
             message: '{VALUE} no es un tipo valido'
-        }
+        },
+        default:'shirts'
     },
     gender: {
         type:String,
         enum:{
             values:['men','women','kid','unisex'],
             message: '{VALUE} no es un genero valido'
-        }
+        },
+        default:'women'
     },
 },
 //!Para que aparezca createdAt y updatedAt

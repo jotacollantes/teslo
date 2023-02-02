@@ -55,5 +55,6 @@ export const config = {
     "/admin",
     "/admin/orders/:id*",
     "/api/admin/dashboard",
+    "/api/admin/products",
   ],
 };

@@ -16,13 +16,12 @@ interface Props{
 }
 
 export const OrderSumary = ({resumen,adicional}:Props) => {
-  
-
-
-
-
-    const {numberOfItems,subTotal,taxCart,total} = 
-    (!resumen) ? useContext(CartContext) : resumen
+    
+     //! No puedo usar un hook de manera condicional
+    //  const {numberOfItems,subTotal,taxCart,total} = 
+    // (!resumen) ? useContext(CartContext) : resumen
+    const {numberOfItems,subTotal,taxCart,total} =useContext(CartContext)
+    const summaryValues= (resumen) ? resumen : {numberOfItems,subTotal,taxCart,total}
   
   
   return (
@@ -37,26 +36,26 @@ export const OrderSumary = ({resumen,adicional}:Props) => {
         justifyContent={"end"}
         sx={{ border: 0 }}
       >
-        <Typography>{numberOfItems} {numberOfItems > 1 ? 'Productos':'Producto'}</Typography>
+        <Typography>{summaryValues.numberOfItems} {summaryValues.numberOfItems > 1 ? 'Productos':'Producto'}</Typography>
       </Grid>
       <Grid item xs={6}>
         <Typography>Subtotal</Typography>
       </Grid>
       <Grid item xs={6} display="flex" justifyContent={"end"}>
-        <Typography>{currency.formateo(subTotal)}</Typography>
+        <Typography>{currency.formateo(summaryValues.subTotal)}</Typography>
       </Grid>
       <Grid item xs={6}>
         <Typography>Impuestos {process.env.NEXT_PUBLIC_RATE_TAX}%</Typography>
       </Grid>
       <Grid item xs={6} display="flex" justifyContent={"end"}>
-        <Typography>{currency.formateo(taxCart)}</Typography>
+        <Typography>{currency.formateo(summaryValues.taxCart)}</Typography>
       </Grid>
 
       <Grid item xs={6} sx={{ mt: 1 }}>
         <Typography variant="subtitle1">Total</Typography>
       </Grid>
       <Grid item xs={6} display="flex" justifyContent={"end"} sx={{ mt: 1 }}>
-        <Typography variant="subtitle1">{currency.formateo(total)}</Typography>
+        <Typography variant="subtitle1">{currency.formateo(summaryValues.total)}</Typography>
       </Grid>
     </Grid>
   );

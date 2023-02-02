@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { GetServerSideProps } from 'next'
 import { AdminLayout } from '../../../components/layouts'
 import { IProduct } from '../../../interfaces';
@@ -6,6 +6,11 @@ import { DriveFileRenameOutline, SaveOutlined, UploadOutlined } from '@mui/icons
 import { dbProducts } from '../../../database';
 import { Box, Button, capitalize, Card, CardActions, CardMedia, Checkbox, Chip, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, ListItem, Paper, Radio, RadioGroup, TextareaAutosize, TextField } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import { alerta, confirmacion } from '../../../utils/notificaciones';
+import { tesloApi } from '../../../api/tesloApi';
+import { Product } from '../../../models';
+import { useRouter } from 'next/router';
+
 
 
 const validTypes  = ['shirts','pants','hoodies','hats']
@@ -39,9 +44,13 @@ interface Props {
 
 const ProductAdminPage= ({ product }:Props) => {
 
+   //*State para manejar los tags.
+    const [newTagValue, setNewTagValue] = useState('')
+    //*State para evitar el doble posteo
+    const [isSaving, setIsSaving] = useState(false)
     //React hook form
     const {register,handleSubmit,formState:{errors},getValues,setValue,watch}= useForm<FormData>({defaultValues:product})//!Le asigno los valores que se mostraran en el formulario a cargar
-
+    const router=useRouter()
     useEffect(() => {
         //!el watch crea un observable que se queda ejecutando aun si se se cambia de pagina. si se vuelve a la pagina habrá 2 observable por eso es que cuando se cambia de pagina o se desmonta el componente hay que eliminar el watch actual
 
@@ -67,14 +76,73 @@ const ProductAdminPage= ({ product }:Props) => {
     
 
 
-
-    const onDeleteTag = ( tag: string ) => {
+    const onNewTag = ()=>{
+    
+        const newTag= newTagValue.trim().toLocaleLowerCase()
+        //!Para dejar vacio el input del tag
+        setNewTagValue('')
+        //!Actualizamos los tags
+        const currentTags=getValues('tags')
+        //!Valido si esta incluyendo el mismo tag salimos de la funcion
+        if (currentTags.includes(newTag)){
+            return;
+        }
+        //!Añadimos a currentags que es un arreglo el nuevo tag
+        currentTags.push(newTag)
+        //! como currentTags hace referencia a getValues no es necesario hacer el setValues()
+        setValue('tags',currentTags,{shouldValidate:true})
+        
 
     }
 
-    const onSubmitForm=(formData:FormData)=>{
+    const onDeleteTag = ( tag: string ) => {
+        const deletedTags=getValues('tags').filter((t)=>t !==tag)
+        setValue('tags',deletedTags,{shouldValidate:true})
+    }
+
+    const onSubmitForm=async (formData:FormData)=>{
         
-            console.log({formData})
+            //console.log({formData})
+            //!Primero validamos si hay al menos 2 imagenes.
+            if (formData.images.length < 2)
+            {
+                alerta("Error al actualizar el producto","Al menos debe de tener 2 imagenes")
+                return;
+            }
+            //!Para evitar el doble posteo
+            setIsSaving(true)
+            try {
+                const {data}=await tesloApi(
+                    {
+                    url:'/admin/products',
+                    //* SI tenemos un _id es una actualizacion y usamos el PUT
+                    method: formData._id ? 'PUT': 'POST',
+                    
+                    data:formData
+                   })
+                    console.log(data)
+                
+                
+                
+                //!SI el id no existe en el formData es porque es un producto nuevo
+                if(!formData._id)
+                {
+                    //Todo Regargar el navegador
+                    confirmacion("Producto creado  con exito")
+                    router.replace(`/admin/products/${formData.slug}`)
+                } 
+                else {
+                    setIsSaving(false)
+                }
+                confirmacion("Producto actualizado con exito")
+                //setIsSaving(false)
+
+            } catch (error) {
+                setIsSaving(false)
+                console.log(error)
+            }
+
+
     }
 
     const onChangeSize=(size:string)=>{
@@ -107,6 +175,7 @@ const ProductAdminPage= ({ product }:Props) => {
                         startIcon={ <SaveOutlined /> }
                         sx={{ width: '150px' }}
                         type="submit"
+                        disabled={isSaving}
                         >
                         Guardar
                     </Button>
@@ -248,7 +317,7 @@ const ProductAdminPage= ({ product }:Props) => {
                                 {
                                 required: 'Este campo es requerido',
                                 validate: (val)=>{
-                                    return val.trim().includes(' ') ? 'No puede tener espacuios en blanco': undefined
+                                    return val.trim().includes(' ') ? 'No puede tener espacios en blanco': undefined
                                     }
                                 
                                 })
@@ -263,7 +332,19 @@ const ProductAdminPage= ({ product }:Props) => {
                             variant="filled"
                             fullWidth 
                             sx={{ mb: 1 }}
-                            helperText="Presiona [spacebar] para agregar"
+                            //!Primero debo de ingresar los datos del input al estado
+                            value={newTagValue}
+                            onChange={(event)=> setNewTagValue(event.target.value)}
+                            onKeyUp={(value)=>{
+                                value.code==='Space' ? onNewTag() : undefined
+                            }
+                                
+                                
+                            }
+                            
+                            
+                            
+                            helperText="Presiona [spacebar] o [enter] para agregar"
                         />
                         
                         <Box sx={{
@@ -275,7 +356,7 @@ const ProductAdminPage= ({ product }:Props) => {
                         }}
                         component="ul">
                             {
-                                product.tags.map((tag) => {
+                                getValues('tags').map((tag) => {
 
                                 return (
                                     <Chip
@@ -348,8 +429,27 @@ const ProductAdminPage= ({ product }:Props) => {
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     
     const { slug = ''} = query;
+    let product:IProduct|null
+    //*SI es un producto nuevo entra por aqui.
+    if (slug==='new')
+    {
+        //!Para cnvertirlo en un objeto literal de JS 
+        const tempProduct= await JSON.parse(JSON.stringify(new Product() ))
+        //*Borramos la propiedad _id
+        delete tempProduct._id
+        tempProduct.images=['img1','img2']
+        product=tempProduct
+    }
+    else 
+    {
+        //*Va a actualizar un producto
+        //*Esta consulta puede devolver un nulo , hay que especificarlo en el type de product.
+        //!EN esata consulta se devuelve el _id
+        product = await dbProducts.getProductBySlug(slug.toString());
     
-    const product = await dbProducts.getProductBySlug(slug.toString());
+    }
+    
+    console.log(product)    
 
     if ( !product ) {
         return {
@@ -370,3 +470,5 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 
 
 export default ProductAdminPage;
+
+

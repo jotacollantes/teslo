@@ -62,12 +62,12 @@ const Users = () => {
       if (status===200){
         //* se hara renderizacion del componente grid porque es una mejor experiencia de usuario que hacer un router.reload()
         //router.reload()
-        notificaciones.confirmacion()
+        notificaciones.confirmacion("Cliente actualizado")
       }
     } catch (error) {
       //*Si hay un error actualizo el estado user con el arreglo previosUsers para dejar el grid como estaba
       setUsers(previosUsers);
-      notificaciones.alerta()
+      notificaciones.alerta("Error al actualizar el usuario","")
       //console.log(error);
       //alert(error)
     }
