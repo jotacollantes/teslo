@@ -11,7 +11,7 @@ export default function Home() {
   if (error) return <div>failed to load</div>
   if (isLoading) return <FullScreenLoading />
   console.log({products})
-  console.log(process.env.VERCEL_URL)
+  console.log(process.env.HOST_NAME)
   return (
     //Añadimos el layout ShopLayout
     <ShopLayout
