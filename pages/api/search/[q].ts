@@ -5,8 +5,7 @@ import { IProduct } from "../../../interfaces/";
 
 type Data = {
   message?: string;
-  products?: IProduct[];
-};
+  }|IProduct[];
 
 export default function handler(
   req: NextApiRequest,

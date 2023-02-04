@@ -61,6 +61,7 @@ const updateUser=async(req: NextApiRequest, res: NextApiResponse<Data>)=> {
     await db.disconnect
 
     //*Tengo que definir el type para users del tipo IUser[] en la response
+    
     return res.status(200).json({message: "Usuario Actualizado"})
 }
 

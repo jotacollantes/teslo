@@ -12,9 +12,7 @@ type Data = {
   lowInventory: number; // products con 10 o menos unidades
 };
 
-type Mensaje = {
-  messages: string;
-};
+
 
 export default async function handler(
   req: NextApiRequest,

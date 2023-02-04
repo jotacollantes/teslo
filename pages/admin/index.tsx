@@ -70,7 +70,12 @@ const DashBoard = () => {
         <SummaryTile title={paidOrders} subTitle={"Ordenes Pagadas"} icon={<AttachMoneyOutlined color="success" sx={{ fontSize: 60 }} /> } />
         <SummaryTile title={notPaidOrders} subTitle={"Ordenes Pendientes"} icon={<CreditCardOffOutlined color="error" sx={{ fontSize: 60 }} /> } />
         <SummaryTile title={numberOfClients} subTitle={"Clientes"} icon={<GroupOutlined color="primary" sx={{ fontSize: 60 }} /> } />
-        <SummaryTile title={numberOfProducts} subTitle={"Productos"} icon={<CategoryOutlined color="warning" sx={{ fontSize: 60 }} /> } />
+        <SummaryTile
+        title={numberOfProducts}
+        subTitle={"Productos"}
+        icon={<CategoryOutlined color="warning" sx={{ fontSize: 60 }} /> } 
+        url={"/admin/products"}
+        />
         <SummaryTile title={productsWithNotInventory} subTitle={"Productos sin existencias"} icon={<CancelPresentationOutlined color="error" sx={{ fontSize: 60 }} /> } />
         <SummaryTile title={lowInventory} subTitle={"Bajo Inventario"} icon={<ProductionQuantityLimitsOutlined color="warning" sx={{ fontSize: 60 }} /> } />
         <SummaryTile title={refreshIn} subTitle={"Actualizacion en"} icon={<AccessTimeOutlined color="secondary" sx={{ fontSize: 60 }} /> } />

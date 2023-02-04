@@ -1,8 +1,8 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { ChangeEvent,useEffect, useRef, useState } from 'react'
 import { GetServerSideProps } from 'next'
 import { AdminLayout } from '../../../components/layouts'
 import { IProduct } from '../../../interfaces';
-import { DriveFileRenameOutline, SaveOutlined, UploadOutlined } from '@mui/icons-material';
+import { CleaningServices, DriveFileRenameOutline, FolderOff, SaveOutlined, UploadOutlined } from '@mui/icons-material';
 import { dbProducts } from '../../../database';
 import { Box, Button, capitalize, Card, CardActions, CardMedia, Checkbox, Chip, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, ListItem, Paper, Radio, RadioGroup, TextareaAutosize, TextField } from '@mui/material';
 import { useForm } from 'react-hook-form';
@@ -10,6 +10,8 @@ import { alerta, confirmacion } from '../../../utils/notificaciones';
 import { tesloApi } from '../../../api/tesloApi';
 import { Product } from '../../../models';
 import { useRouter } from 'next/router';
+import { isJsxClosingFragment } from 'typescript';
+import { DataMessage } from '../../api/admin/upload';
 
 
 
@@ -43,13 +45,14 @@ interface Props {
 }
 
 const ProductAdminPage= ({ product }:Props) => {
-
+   console.log(product)
    //*State para manejar los tags.
     const [newTagValue, setNewTagValue] = useState('')
     //*State para evitar el doble posteo
     const [isSaving, setIsSaving] = useState(false)
     //React hook form
     const {register,handleSubmit,formState:{errors},getValues,setValue,watch}= useForm<FormData>({defaultValues:product})//!Le asigno los valores que se mostraran en el formulario a cargar
+    const fileInputRef=useRef<HTMLInputElement>(null)
     const router=useRouter()
     useEffect(() => {
         //!el watch crea un observable que se queda ejecutando aun si se se cambia de pagina. si se vuelve a la pagina habrá 2 observable por eso es que cuando se cambia de pagina o se desmonta el componente hay que eliminar el watch actual
@@ -99,10 +102,56 @@ const ProductAdminPage= ({ product }:Props) => {
         const deletedTags=getValues('tags').filter((t)=>t !==tag)
         setValue('tags',deletedTags,{shouldValidate:true})
     }
+const onChangeSize=(size:string)=>{
+        const currentSize=getValues('sizes') //a devolver un array de sizes
 
+        //! Si incluye el size enviado como parametro a la funcion en el on change en currentSize es por que lo quiere eliminar.
+        if (currentSize.includes(size))
+        {
+            return setValue('sizes',currentSize.filter( s => s!==size),{shouldValidate:true})
+        }
+        //* en este punto es para añadirlo, propago y le sumo la nueva size entre llaves por que es un arreglo [...currentSize,size]
+
+        setValue('sizes',[...currentSize,size],{shouldValidate:true})
+        
+
+    }
+
+    const onfilesSelected=async({target}:ChangeEvent<HTMLInputElement>)=>{
+        if (!target.files || target.files.length ===0)
+        {
+            return;
+        }
+        //console.log(target.files)
+        try {
+         for (const file of target.files)
+         {
+            //FormData es un objeto de JavaScript que se tiene que crear por cada iteracion
+            const formData= new FormData()
+            //Añadimos la propiedad file al objeto formData
+            formData.append('file',file)
+            //console.log(file)
+            const {data}= await tesloApi.post<DataMessage>('/admin/upload',formData)
+            console.log('Data: ',data.message)
+            setValue('images',[...getValues('images'),data.message],{shouldValidate:true})
+         }
+        }
+        catch (error){
+
+        }
+        
+     //console.log(getValues('images'))
+    
+    }
+    //*Solo se elimina del frontend
+    const onDeleteImage=(img:string)=>{
+        const tempImages = getValues('images').filter(image=>image!==img)
+        setValue('images',[...tempImages],{shouldValidate:true})
+
+    }
     const onSubmitForm=async (formData:FormData)=>{
         
-            //console.log({formData})
+            console.log({formData})
             //!Primero validamos si hay al menos 2 imagenes.
             if (formData.images.length < 2)
             {
@@ -120,7 +169,7 @@ const ProductAdminPage= ({ product }:Props) => {
                     
                     data:formData
                    })
-                    console.log(data)
+                console.log(data)
                 
                 
                 
@@ -145,19 +194,7 @@ const ProductAdminPage= ({ product }:Props) => {
 
     }
 
-    const onChangeSize=(size:string)=>{
-        const currentSize=getValues('sizes') //a devolver un array de sizes
-
-        //! Si incluye el size enviado como parametro a la funcion en el on change en currentSize es por que lo quiere eliminar.
-        if (currentSize.includes(size))
-        {
-            return setValue('sizes',currentSize.filter( s => s!==size),{shouldValidate:true})
-        }
-        //* en este punto es para añadirlo, propago y le sumo la nueva size entre llaves por que es un arreglo [...currentSize,size]
-
-        setValue('sizes',[...currentSize,size],{shouldValidate:true})
-
-    }
+    
     return (
         <AdminLayout 
             title={'Producto'} 
@@ -380,29 +417,42 @@ const ProductAdminPage= ({ product }:Props) => {
                                 fullWidth
                                 startIcon={ <UploadOutlined /> }
                                 sx={{ mb: 3 }}
+                                onClick={()=>fileInputRef.current?.click()}
                             >
                                 Cargar imagen
                             </Button>
+                            <input
+                            ref={fileInputRef}
+                            type="file"
+                            multiple
+                            accept='image/png, image/gif, image/jpeg, image/jpg'
+                            style={{display:'none'}}
+                            onChange={(event)=>onfilesSelected(event)}
+                            />
 
                             <Chip 
                                 label="Es necesario al 2 imagenes"
                                 color='error'
                                 variant='outlined'
+                                sx={{display : getValues('images').length <2 ? 'flex': 'none'}}
                             />
 
                             <Grid container spacing={2}>
                                 {
-                                    product.images.map( img => (
+                                    getValues('images').map( img => (
                                         <Grid item xs={4} sm={3} key={img}>
                                             <Card>
                                                 <CardMedia 
                                                     component='img'
                                                     className='fadeIn'
-                                                    image={ `/products/${ img }` }
+                                                    //image={ `/products/${ img }` }
+                                                    image={ img }
                                                     alt={ img }
                                                 />
                                                 <CardActions>
-                                                    <Button fullWidth color="error">
+                                                    <Button
+                                                    fullWidth color="error"
+                                                    onClick={()=>onDeleteImage(img)}>
                                                         Borrar
                                                     </Button>
                                                 </CardActions>
@@ -449,7 +499,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     
     }
     
-    console.log(product)    
+    //console.log('getServerSideProp: ',{product})    
 
     if ( !product ) {
         return {

@@ -28,9 +28,13 @@ export const ProductCard = ({ product }: Props) => {
   // }, [isMovered,product.images])
 
   //!si el mouse esta sobre la imagen
-  const productImage = isMovered
-    ? `/products/${product.images[1]}`
-    : `/products/${product.images[0]}`;
+  // const productImage = isMovered
+  //   ? `/products/${product.images[1]}`
+  //   : `/products/${product.images[0]}`;
+
+    const productImage = isMovered
+    ? product.images[1]
+    : product.images[0];
 
   return (
     //!Si es xs solo se mostrara 2 productos si es de sm en adelante solo se mostrara 3 productos

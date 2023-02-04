@@ -3,10 +3,16 @@ import { db } from "../../../database";
 import { Product } from "../../../models";
 import { IProduct } from "../../../interfaces/";
 
+// type Data = {
+//   message?: string;
+//   products?: IProduct[];
+// };
+
 type Data = {
   message?: string;
-  products?: IProduct[];
-};
+  
+}| IProduct[];
+
 
 export default function handler(
   req: NextApiRequest,
@@ -55,12 +61,23 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   await db.connect();
   //! Es necesario crear el tipado para cualquier elemento o propiedad que se envie en la response
   //! con .select() especifico los campos y -_1 excluye el campo _id de la respuesta
-  const products: Data = await Product.find(filtro)
+  const products = await Product.find(filtro)
     .select("title images sizes price inStock slug -_id")
     .lean();
 
   await db.disconnect();
 
-  //return res.status(200).json(products)
-  return res.status(200).json(products);
+ 
+  //Todo procesamiento de las imagenes cuando las subimos al server
+  //*Como products es un array de productos hay que iterar para manejar las imagenes por producto
+  const updatedProducts = products.map((product) => {
+    product.images = product.images.map((image) => {
+      return image.includes("http")
+        ? image
+        : `${process.env.HOST_NAME}/products/${image}`;
+    });
+    return product
+  });
+  //return res.status(200).json(products);
+  return res.status(200).json(updatedProducts);
 };

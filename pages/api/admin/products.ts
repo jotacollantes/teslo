@@ -3,6 +3,10 @@ import { db } from '../../../database';
 import { IProduct } from '../../../interfaces';
 import { Product } from '../../../models';
 import { isValidObjectId } from 'mongoose';
+import { v2 as cloudinary } from "cloudinary";
+
+
+cloudinary.config(process.env.CLOUDINARY_URL!);
 
 type Data =
 |{message: string}
@@ -36,15 +40,28 @@ const getProducts= async(req: NextApiRequest, res: NextApiResponse<Data>)=>{
    await db.connect()
    const products = await Product.find().sort({title:'asc'}).lean()
    await db.disconnect()
-   //todo: actualizar imagenes
    
-   return res.status(200).json(products)
+  //Todo procesamiento de las imagenes cuando las subimos al server
+  //*Como products es un array de productos hay que iterar para manejar las imagenes por producto
+  const updatedProducts = products.map((product) => {
+    product.images = product.images.map((image) => {
+      return image.includes("http")
+        ? image
+        : `${process.env.HOST_NAME}/products/${image}`;
+    });
+    return product
+  });
+   
+   //return res.status(200).json(products)
+   return res.status(200).json(updatedProducts)
 }
 
 
 
 const updateProduct=async(req: NextApiRequest, res: NextApiResponse<Data>)=> {
 
+
+    //*Solo desestructuro el _id y el images para el manejo si es producto nuevo o existente y par ael manejo de images. La base de datos se actualiza cono lo que venga integro en req.body
     const {_id='',images=[]}=req.body as IProduct;
 
     if (!isValidObjectId)
@@ -67,8 +84,26 @@ const updateProduct=async(req: NextApiRequest, res: NextApiResponse<Data>)=> {
             return res.status(400).json({ message: 'No existe ese producto'})
         }
         //! En este punto se actualiza la base de datos 
-        await product.update(req.body)
+
         //TODO: eliminar fotos en cloudynary
+        	
+        for (const image of product.images) {
+           //*se compara el array images que envia el cliente versus las imagenes que ya tiene en la BD antes de actualizar
+           if (!images.includes(image)) {
+            //https://res.cloudinary.com/j2systems/image/upload/v1675452125/zb6unmb86joygdkah5tr.png
+            //* me quedo con zb6unmb86joygdkah5tr.png
+            const pathNameTemp=image.split('/')
+           //* me quedo con zb6unmb86joygdkah5tr
+            const fileNameTemp=pathNameTemp[pathNameTemp.length-1].split('.')
+            const idCloudinary=fileNameTemp[0]
+            console.log({image,idCloudinary})
+            await cloudinary.uploader.destroy(idCloudinary)
+
+           }
+        }
+        //await product.updateOne(req.body,{ new: true })
+        await product.update(req.body)
+        
         await db.disconnect()
         return res.status(200).json(product)
       } catch (error) {

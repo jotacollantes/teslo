@@ -14,12 +14,13 @@ export const ProductSlideShow = ({images}:Props) => {
     <Slide easing='ease' duration={7000} indicators>
         {
             images.map((image)=>{
-                const url=`/products/${image}`
+                //const url=`/products/${image}`
                 return (
                     //styles['each-slide'] se coloca como una propiedad computada ya que js no acepta el - como parte de una propiedad
                     <div className={styles.eachSlide} key={image}>
                         <div style={{
-                            backgroundImage:`url(${url})`,
+                            //backgroundImage:`url(${url})`,
+                            backgroundImage:`url(${image})`,
                             backgroundSize:'cover'
 
                         }}>

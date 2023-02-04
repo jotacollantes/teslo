@@ -5,7 +5,7 @@ import { IOrder } from '../../../interfaces';
 import { Order } from '../../../models';
 
 type Data = {
-    name: string
+    message: string
 }|IOrder[]
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
@@ -16,7 +16,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
            return getOrders(req,res)
     
         default:
-            res.status(400).json({ name: 'Bad Request' })
+            res.status(400).json({ message: 'Bad Request' })
     }
     
 }

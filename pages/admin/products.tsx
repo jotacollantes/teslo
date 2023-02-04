@@ -20,7 +20,8 @@ const columns: GridColDef[] = [
           <CardMedia
             component="img"
             className="fadeIn"
-            image={`/products/${row.img}`}
+            //image={`/products/${row.img}`}
+            image={row.img}
             alt={row.title}
           />
         </a>
@@ -60,6 +61,7 @@ const Products = () => {
 
   let rows = [];
   for (const producto of data!) {
+    console.log('URL image: ',producto.images[0])
     rows.push({
       id: producto._id,
       img: producto.images[0],
