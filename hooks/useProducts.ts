@@ -1,8 +1,5 @@
 import useSWR, { SWRConfiguration } from "swr";
 import { IProduct } from '../interfaces/products';
-
-
-
 //! El fetcher lo vamos  a poner como provider en el /pages/_app
 //const fetcher = (...args:[key:string]) => fetch(...args).then(res => res.json())
 
