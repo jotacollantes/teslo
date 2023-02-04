@@ -43,7 +43,8 @@ export const getProductBySlug = async (
   product.images = product.images.map((image) => {
     return image.includes("http")
       ? image
-      : `${process.env.HOST_NAME}/products/${image}`;
+      //: `${process.env.HOST_NAME}/products/${image}`;
+      : `https//${process.env.VERCEL_URL}/products/${image}`;
   });
 
   return JSON.parse(JSON.stringify(product));
@@ -123,7 +124,8 @@ export const getProductBySearch = async (term: string): Promise<IProduct[]> => {
     product.images = product.images.map((image) => {
       return image.includes("http")
         ? image
-        : `${process.env.HOST_NAME}/products/${image}`;
+        //: `${process.env.HOST_NAME}/products/${image}`;
+      : `https//${process.env.VERCEL_URL}/products/${image}`;
     });
     return product
   });
@@ -175,7 +177,8 @@ export const getAllProducts = async (): Promise<IProduct[]> => {
     product.images = product.images.map((image) => {
       return image.includes("http")
         ? image
-        : `${process.env.HOST_NAME}/products/${image}`;
+        //: `${process.env.HOST_NAME}/products/${image}`;
+      : `https//${process.env.VERCEL_URL}/products/${image}`;
     });
     return product
   });
