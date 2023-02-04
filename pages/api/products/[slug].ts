@@ -46,8 +46,8 @@ const getProductsBySlug = async (
     product.images = product.images.map((image) => {
       return image.includes("http")
         ? image
-        : `${process.env.HOST_NAME}/products/${image}`;
-      //: `/products/${image}`;
+        //: `${process.env.HOST_NAME}/products/${image}`;
+      : `products/${image}`;
     });
     
 
