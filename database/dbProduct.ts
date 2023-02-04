@@ -44,7 +44,7 @@ export const getProductBySlug = async (
     return image.includes("http")
       ? image
       //: `${process.env.HOST_NAME}/products/${image}`;
-      : `https//${process.env.VERCEL_URL}/products/${image}`;
+      : `/products/${image}`;
   });
 
   return JSON.parse(JSON.stringify(product));
@@ -125,7 +125,7 @@ export const getProductBySearch = async (term: string): Promise<IProduct[]> => {
       return image.includes("http")
         ? image
         //: `${process.env.HOST_NAME}/products/${image}`;
-      : `https//${process.env.VERCEL_URL}/products/${image}`;
+      : `/products/${image}`;
     });
     return product
   });
@@ -178,7 +178,7 @@ export const getAllProducts = async (): Promise<IProduct[]> => {
       return image.includes("http")
         ? image
         //: `${process.env.HOST_NAME}/products/${image}`;
-      : `https//${process.env.VERCEL_URL}/products/${image}`;
+      : `/products/${image}`;
     });
     return product
   });

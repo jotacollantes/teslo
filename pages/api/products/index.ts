@@ -75,7 +75,7 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       return image.includes("http")
         ? image
         //: `${process.env.HOST_NAME}/products/${image}`;
-      : `https//${process.env.VERCEL_URL}/products/${image}`;
+      : `/products/${image}`;
     });
     return product
   });
