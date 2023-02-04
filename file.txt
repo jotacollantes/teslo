@@ -1,0 +1,5 @@
+teslo-admin
+cOC4XLWNKvUD1YrF
+mongodb+srv://<teslo-admin>:<cOC4XLWNKvUD1YrF>@cluster0.ntcmp.mongodb.net/teslodb
+
+mongodb+srv://teslo-admin:cOC4XLWNKvUD1YrF@cluster0.ntcmp.mongodb.net/teslodb
