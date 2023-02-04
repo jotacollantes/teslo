@@ -1,7 +1,7 @@
 import React from 'react'
 import { Slide } from 'react-slideshow-image'
 import 'react-slideshow-image/dist/styles.css'
-import styles from './ProductSlideShow.module.css'
+import styles from './ProductSlide.module.css'
 
 
 //!Como siempre seran varias imagenes siempre se deben de definir como un arreglo
