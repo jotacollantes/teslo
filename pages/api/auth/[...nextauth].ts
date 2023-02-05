@@ -28,10 +28,10 @@ export default NextAuth({
       return await dbUsers.checkUserEmailPassword(credentials!.email,credentials!.password) as any
       }}),
 
-      // GithubProvider({
-      //   clientId: process.env.GITHUB_ID!,
-      //   clientSecret: process.env.GITHUB_SECRET!,
-      // }),
+      GithubProvider({
+        clientId: process.env.GITHUB_ID!,
+        clientSecret: process.env.GITHUB_SECRET!,
+      }),
     ],
 
    //!Customs Pages
