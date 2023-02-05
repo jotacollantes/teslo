@@ -11,7 +11,7 @@ import { tesloApi } from '../../../api/tesloApi';
 import { Product } from '../../../models';
 import { useRouter } from 'next/router';
 import { isJsxClosingFragment } from 'typescript';
-import { DataMessage } from '../../api-rest/admin/upload';
+import { DataMessage } from '../../api/admin/upload';
 
 
 
