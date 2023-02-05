@@ -10,8 +10,6 @@ export default function Home() {
   const {products,error,isLoading}=useProducts('/products')
   if (error) return <div>failed to load</div>
   if (isLoading) return <FullScreenLoading />
-  //console.log({products})
-  
   return (
     //Añadimos el layout ShopLayout
     <ShopLayout
