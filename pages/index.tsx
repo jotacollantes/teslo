@@ -11,8 +11,7 @@ export default function Home() {
   if (error) return <div>failed to load</div>
   if (isLoading) return <FullScreenLoading />
   console.log({products})
-  console.log(process.env.HOST_NAME)
-  console.log(process.env.NEXTAUTH_URL)
+  
   return (
     //Añadimos el layout ShopLayout
     <ShopLayout
