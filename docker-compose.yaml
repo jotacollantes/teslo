@@ -4,6 +4,15 @@ services:
     container_name: teslo-database
     ports:
       - 27017:27017
-    volumes:
-    #La informacion de mongo se va a grabar en /mongo del filesystem del proyecto y en el filesystem de la imagen
-      - ./mongo:/data/db
+    #volumes:
+      #La informacion de mongo se va a grabar en /mongo del filesystem del proyecto y en el filesystem de la imagen
+      #- ./mongo:/data/db
+          
+      #La informacion de mongo se va a grabar en el volumen mongoDbData
+      #- mongoDbData:/data/db
+
+
+#volumes:
+  #Si no se especifica que es un volumen externo o un volumen ya existente va a crear el volumen: <nombre del proyecto>-<nombre del volumen>
+  #mongoDbData:
+    #external: true

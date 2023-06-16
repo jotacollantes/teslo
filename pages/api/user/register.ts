@@ -43,6 +43,7 @@ export default function handler(
 }
 
 const createUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+  
   const { email = "", password = "", name } = req.body as TypeBody;
 
   //* Validaciones antes de consultar en la base de datos

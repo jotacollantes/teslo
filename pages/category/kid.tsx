@@ -6,7 +6,7 @@ import { FullScreenLoading } from "../../components/ui/FullScreenLoading";
 import { useProducts } from '../../hooks';
 
 
-export default function Women() {
+export default function Kid() {
   const {products,error,isLoading}=useProducts('/products?gender=kid')
   if (error) return <div>failed to load</div>
   if (isLoading) return <FullScreenLoading />

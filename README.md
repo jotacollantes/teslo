@@ -26,5 +26,5 @@ Renombrar el archivo en el servidor de produccion __.env.template__ a __.env__
 
 ## Llenar la base de datos de prueba
 ```
-https://localhost:3000/api/seed
+http://localhost:3000/api/seed
 ```
